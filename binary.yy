@@ -164,8 +164,7 @@ function : FUNCTION functionbody
 
 functionbody : POPEN parlist PCLOSE block END   
 
-parlist : /* empty */ 
-        | namelist 
+parlist : namelist 
         | namelist COMMA DOTDOTDOT 
         | DOTDOTDOT 
         

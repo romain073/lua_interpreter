@@ -3,10 +3,14 @@
 #define YY_DECL yy::parser::symbol_type yylex()
 }
 %option noyywrap nounput batch noinput
+
+
+NBRS [0-9]+
+
 %%
 
 \-\-[^\n]*\n /* comment */
-[0-9]+(e\-[0-9]+)?          { return yy::parser::make_INTEGER(yytext); }
+({NBRS}|{NBRS}?\.{NBRS})([Ee][-+]?{NBRS})?       { return yy::parser::make_NUMBER(yytext); }
 true         { return yy::parser::make_TRUE(yytext); }
 false         { return yy::parser::make_FALSE(yytext); }
 nil         { return yy::parser::make_NIL(yytext); }

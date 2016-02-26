@@ -7,7 +7,7 @@
   #define YY_DECL yy::parser::symbol_type yylex()
   YY_DECL;
 }
-%token <std::string> INTEGER
+%token <std::string> NUMBER
 %token <std::string> SEMICOLON
 %token <std::string> NAME
 %token <std::string> POPEN
@@ -130,7 +130,7 @@ varlist : var
 exp : TRUE      
     | FALSE     
     | NIL       
-    | INTEGER
+    | NUMBER
     | STRING       
     | DOTDOTDOT       
     | prefixexp 

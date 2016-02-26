@@ -1,6 +1,11 @@
 romain,damien=true,false;
 test=nil;
 dix=10;
+dix=10.1;
+dix=10.1e-10;
+dix=10.1E+10;
+dix=10.1E10;
+dix=.1;
 onze='onze';
 douze="douze";
 a=...

@@ -1,16 +1,15 @@
 #include<iostream>
 #include "binary.tab.hh"
-extern unsigned int total;
 
 void yy::parser::error(std::string const&err)
 {
-  std::cout << "It's one of the bad ones... " << err << std::endl;
+  std::cout << "Parse error... " << err << std::endl;
 }
 
 int main(int argc, char **argv)
 {
-yy::parser parser;
+  yy::parser parser;
   if(!parser.parse())
-    std::cout << "It's a bingo! " << total << std::endl;
+    std::cout << "Parse complete." << std::endl;
   return 0;
 }

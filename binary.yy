@@ -3,7 +3,6 @@
 %define api.value.type variant
 %define api.token.constructor
 %code{
-  unsigned int total = 0;
   #include <string>
   #define YY_DECL yy::parser::symbol_type yylex()
   YY_DECL;

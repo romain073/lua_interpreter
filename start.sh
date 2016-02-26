@@ -1,1 +1,1 @@
-make clean;make && cat test.lua | ./parser;
+make && cat test.lua | ./parser;

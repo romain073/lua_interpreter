@@ -1,0 +1,6 @@
+/binary.output
+/binary.tab.cc
+/binary.tab.hh
+/lex.yy.c
+/parser
+/stack.hh

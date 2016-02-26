@@ -63,6 +63,11 @@
 %token <std::string> RETURN
 %token <std::string> BREAK
 
+%left PLUS MINUS
+%left MULTIPLY DIVIDE MODULO POW DOTDOT
+%left LT GT EQ NE LTE GTE
+%left AND OR
+%right UNARY
 
 %token EOF 0 "end of file"
 %%
@@ -134,10 +139,26 @@ exp : TRUE
     | STRING       
     | DOTDOTDOT       
     | prefixexp 
-    | function 
-    | unaryoperator exp 
-    | exp binaryoperator exp 
+    | function
     | tableconstructor 
+    | MINUS exp %prec UNARY
+    | NOT exp %prec UNARY
+    | HASH exp %prec UNARY
+	| exp PLUS exp 
+	| exp MULTIPLY exp 
+	| exp MINUS exp 
+	| exp DIVIDE exp 
+	| exp POW exp 
+	| exp MODULO exp 
+	| exp LT exp 
+	| exp LTE exp 
+	| exp GT exp 
+	| exp GTE exp 
+	| exp EQ exp 
+	| exp NE exp 
+	| exp AND exp 
+	| exp OR exp 
+	| exp DOTDOT exp     
     
 function : FUNCTION functionbody  
 
@@ -169,25 +190,6 @@ args: POPEN optexplist PCLOSE
 optexplist  : /* empty */ 
             | explist 
 
-unaryoperator   :MINUS 
-                |  NOT 
-                | HASH 
-                
-binaryoperator  : PLUS 
-				| MULTIPLY 
-				| MINUS 
-				| DIVIDE 
-				| POW 
-				| MODULO 
-				| LT 
-				| LTE 
-				| GT 
-				| GTE 
-				| EQ 
-				| NE 
-				| AND 
-				| OR 
-				| DOTDOT 
 				
 tableconstructor : CBRACKETOPEN optfieldlist CBRACKETCLOSE 
 

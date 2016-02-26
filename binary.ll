@@ -4,7 +4,9 @@
 }
 %option noyywrap nounput batch noinput
 %%
-[0-9]+          { return yy::parser::make_INTEGER(yytext); }
+
+\-\-[^\n]*\n /* comment */
+[0-9]+(e\-[0-9]+)?          { return yy::parser::make_INTEGER(yytext); }
 true         { return yy::parser::make_TRUE(yytext); }
 false         { return yy::parser::make_FALSE(yytext); }
 nil         { return yy::parser::make_NIL(yytext); }
@@ -64,9 +66,11 @@ or          { return yy::parser::make_OR(yytext); }
 \'[^']*\'    { return yy::parser::make_STRING(yytext); }
 \"[^"]*\"    { return yy::parser::make_STRING(yytext); }
 \.    { return yy::parser::make_DOT(yytext); }
+\.\.    { return yy::parser::make_DOTDOT(yytext); }
+\.\.\.    { return yy::parser::make_DOTDOTDOT(yytext); }
 
 
 \n           /* munch */
-[ ]           /* munch */
+[ \t]           /* munch */
 <<EOF>>       return yy::parser::make_EOF();
 %%

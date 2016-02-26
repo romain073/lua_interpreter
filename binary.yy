@@ -24,6 +24,8 @@
 %token <std::string> NIL
 %token <std::string> STRING
 %token <std::string> DOT
+%token <std::string> DOTDOT
+%token <std::string> DOTDOTDOT
 %token <std::string> END
 %token <std::string> FUNCTION
 %token <std::string> NOT
@@ -129,9 +131,9 @@ varlist : var
 exp : TRUE      
     | FALSE     
     | NIL       
-    | INTEGER       
+    | INTEGER
     | STRING       
-    | DOT DOT DOT       
+    | DOTDOTDOT       
     | prefixexp 
     | function 
     | unaryoperator exp 
@@ -144,8 +146,8 @@ functionbody : POPEN parlist PCLOSE block END
 
 parlist : /* empty */ 
         | namelist 
-        | namelist COMMA DOT DOT DOT 
-        | DOT DOT DOT 
+        | namelist COMMA DOTDOTDOT 
+        | DOTDOTDOT 
         
 
 namelist: NAME 
@@ -186,7 +188,7 @@ binaryoperator  : PLUS
 				| NE 
 				| AND 
 				| OR 
-				| DOT DOT 
+				| DOTDOT 
 				
 tableconstructor : CBRACKETOPEN optfieldlist CBRACKETCLOSE 
 

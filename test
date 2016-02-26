@@ -1,0 +1,111 @@
+romain,damien=true,false;
+test=nil;
+dix=10;
+onze='onze';
+douze="douze";
+a=...
+test[1]=1;
+romain.fontaine=1;
+(romain)[2] = 1;
+(romain).fontaine = 1;
+functioncall.name = 1
+
+a = function()test=1 end
+a = function(a, b)test=1 end
+a = function(a, ...)test=1 end
+a = function(...)test=1 end
+
+moinsdix=-10;
+f=not true;
+hash=#variable;
+
+var = 0+1+2*3/4%5^3..5<4<=3>3>=5==4~=variable and 4 or 5
+test = 1--1
+
+a={romain=1;1;[test]=1}
+
+do
+a=1
+end
+while true
+do
+B=1
+end
+
+repeat
+c=1
+until false
+
+if a then a()
+elseif b then c()
+elseif c then g()
+else azc()
+end
+
+if a then a()
+elseif c then g()
+else azc()
+end
+
+if a then a()
+else azc()
+end
+
+if a then a();a();a=a
+end
+
+for variable=exp(),exp(),exp() do block() end
+for variable=1,5 do block() end
+
+
+for a,b in a(),b() do block() end
+for a,b,c in a(),b(),c() do block() end
+for a in a() do block() end
+
+function add (a)
+      for i,v in ipairs(a) do
+        sum = sum + v
+      end
+    end
+    
+    
+local function f ()
+      e()
+      return e()
+    end
+    
+local a = ex()
+local a,b= ex(),a
+local a,b= ex(1,2),a
+
+last()
+
+function entry1(o)
+N=N + 1
+      local title = o.title or o.org or 'org'
+      fwrite('<HR>\n<H3>\n')
+      local href = ''
+    
+      if o.url then
+        href = string.format(' HREF="%s"', o.url)
+      end
+      fwrite('<A NAME="%d"%s>%s</A>\n', N, href, title)
+    
+      if o.title and o.org then
+        fwrite('<BR>\n<SMALL><EM>%s</EM></SMALL>', o.org)
+      end
+      fwrite('\n</H3>\n')
+    
+      if o.description then
+        fwrite('%s', string.gsub(o.description,
+                                 '\n\n\n*', '<P>\n'))
+        fwrite('<P>\n')
+      end
+    
+      if o.email then
+        fwrite('Contact: <A HREF="mailto:%s">%s</A>\n',
+               o.email, o.contact or o.email)
+      elseif o.contact then
+        fwrite('Contact: %s\n', o.contact)
+      end
+end

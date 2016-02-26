@@ -160,9 +160,7 @@ exp : TRUE
 	| exp OR exp 
 	| exp DOTDOT exp     
     
-function : FUNCTION functionbody  
-
-functionbody : POPEN parlist PCLOSE block END   
+function : FUNCTION funcbody  
 
 parlist : namelist 
         | namelist COMMA DOTDOTDOT 

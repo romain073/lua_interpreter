@@ -14,6 +14,9 @@ public:
 
     Node(string t, string v) : tag(t), value(v) {
     }
+    
+    Node(string t) : tag(t), value("") {
+    }
 
     Node() {
         tag = "uninitialised";
@@ -29,13 +32,23 @@ public:
             (*i).dump(depth + 1);
     }
     
-    void push_back(Node n){
-        this->children.push_back(n);
+    void push_back(Node n1){
+        this->children.push_back(n1);
+    }
+    void push_back(Node n1, Node n2){
+        this->children.push_back(n1);
+        this->children.push_back(n2);
+    }
+    bool isUndefined(){
+        return this->tag == "uninitialised" && this->value == "uninitialised";
     }
 
     int dumpToFile(ofstream &f, int &id) {
         int myID = id++;
-        f << "id" << myID << " [label=\"" << tag << ":" << value << "\"];" << endl;
+        f << "id" << myID << " [label=\"" << tag;
+        if(value!="")
+            f << " -> " << value;
+        f << "\"];" << endl;
         list<Node>::iterator i;
         for (i = children.begin(); i != children.end(); i++) {
             int childID = (*i).dumpToFile(f, id);

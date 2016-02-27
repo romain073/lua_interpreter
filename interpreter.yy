@@ -74,26 +74,36 @@
 %left AND OR
 %right UNARY
 
+%type <Node> block
+%type <Node> statements
+%type <Node> opt_laststatement
+%type <Node> statement
+%type <Node> laststatement
+%type <Node> optexplist
+%type <Node> varlist
+%type <Node> explist
+%type <Node> var
+%type <Node> exp
 
 %token ENDOFFILE 0 "end of file"
 %%
 
-root : block
+root : block{root=Node("root","root");root.push_back($1);}
 
-block   : statements opt_laststatement
+block   : statements opt_laststatement {$$=Node("Block","");$$.push_back($1);if($2.tag != "undefined") $$.push_back($2);}
 
-statements : /* empty */ 
-        | statements statement opt_semicolon 
+statements : /* empty */ {$$=Node("Statements","");}
+        | statements statement opt_semicolon {$$=$1;$$.push_back($2);}
         
-opt_laststatement: /* empty */ 
-                | laststatement opt_semicolon
+opt_laststatement: /* empty */ {$$=Node();}
+                | laststatement opt_semicolon {$$=$1;}
 
-laststatement   : RETURN optexplist
-                | BREAK
+laststatement   : RETURN optexplist {$$=Node("return","");$$.push_back($2);}
+                | BREAK {$$=Node("break","");}
         
 
 
-statement   : varlist EQUAL explist 
+statement   : varlist EQUAL explist {$$=Node("=", "");$$.push_back($1);$$.push_back($3);}
             | functioncall          
             | DO block END          
             | WHILE exp DO block END
@@ -132,17 +142,17 @@ elseif  : /* empty */
 else: /* empty */
     | ELSE block
 
-var : NAME 
+var : NAME {$$=Node("Var", $1);}
     | prefixexp SBRACKETOPEN exp SBRACKETCLOSE 
     | prefixexp DOT NAME
 
-varlist : var 
-        | varlist COMMA var 
+varlist : var {$$=Node("varlist","");$$.push_back($1);}
+        | varlist COMMA var {$$=$1;$$.push_back($3);}
         
-exp : TRUE      
-    | FALSE     
-    | NIL       
-    | NUMBER
+exp : TRUE      {$$=Node("value", "true");}
+    | FALSE     {$$=Node("value", "false");}
+    | NIL       {$$=Node("value", "nil");}
+    | NUMBER    {$$=Node("number", $1);}
     | STRING       
     | DOTDOTDOT       
     | prefixexp 
@@ -177,8 +187,8 @@ parlist : namelist
 namelist: NAME 
         | namelist COMMA NAME  
 
-explist : exp 
-        | explist COMMA exp 
+explist : exp {$$=Node("Explist","");$$.push_back($1);}
+        | explist COMMA exp {$$=$1;$$.push_back($3);}
 
 prefixexp   : var 
             | functioncall 

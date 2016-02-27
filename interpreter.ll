@@ -1,5 +1,5 @@
 %top{
-#include "binary.tab.hh"
+#include "interpreter.tab.hh"
 #define YY_DECL yy::parser::symbol_type yylex()
 }
 %option noyywrap nounput batch noinput

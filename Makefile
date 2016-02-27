@@ -1,10 +1,10 @@
-parser: lex.yy.c binary.tab.o main.cc
-	g++ -g -DYYDEBUG=1 -oparser binary.tab.o lex.yy.c main.cc
-binary.tab.o: binary.tab.cc
-	g++ -g -c binary.tab.cc
-binary.tab.cc: binary.yy
-	bison -v binary.yy
-lex.yy.c: binary.ll binary.tab.cc
-	flex binary.ll
+parser: lex.yy.c interpreter.tab.o main.cc
+	g++ -g -DYYDEBUG=1 -oparser interpreter.tab.o lex.yy.c main.cc
+interpreter.tab.o: interpreter.tab.cc
+	g++ -g -c interpreter.tab.cc
+interpreter.tab.cc: interpreter.yy
+	bison -v interpreter.yy
+lex.yy.c: interpreter.ll interpreter.tab.cc
+	flex interpreter.ll
 clean:
-	rm -f binary.tab.* lex.yy.c* parser
+	rm -f interpreter.tab.* lex.yy.c* parser

@@ -1,5 +1,5 @@
 #include<iostream>
-#include "binary.tab.hh"
+#include "interpreter.tab.hh"
 
 void yy::parser::error(std::string const&err)
 {

@@ -76,5 +76,5 @@ or          { return yy::parser::make_OR(yytext); }
 
 \n           /* munch */
 [ \t]           /* munch */
-<<EOF>>       return yy::parser::make_EOF();
+<<EOF>>       return yy::parser::make_ENDOFFILE();
 %%

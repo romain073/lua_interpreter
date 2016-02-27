@@ -2,10 +2,15 @@
 %defines
 %define api.value.type variant
 %define api.token.constructor
+%code requires{
+    #include "headers/Node.h"
+}
+
 %code{
   #include <string>
   #define YY_DECL yy::parser::symbol_type yylex()
   YY_DECL;
+  Node root;
 }
 %token <std::string> NUMBER
 %token <std::string> SEMICOLON
@@ -69,11 +74,13 @@
 %left AND OR
 %right UNARY
 
-%token EOF 0 "end of file"
-%%
-block   : chunk 
 
-chunk   : statements opt_laststatement
+%token ENDOFFILE 0 "end of file"
+%%
+
+root : block
+
+block   : statements opt_laststatement
 
 statements : /* empty */ 
         | statements statement opt_semicolon 

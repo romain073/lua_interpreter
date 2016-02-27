@@ -84,26 +84,27 @@
 %type <Node> explist
 %type <Node> var
 %type <Node> exp
+%type <Node> prefixexp
 
 %token ENDOFFILE 0 "end of file"
 %%
 
-root : block{root=Node("root","root");root.push_back($1);}
+root : block{root=Node("root");root.push_back($1);}
 
-block   : statements opt_laststatement {$$=Node("Block","");$$.push_back($1);if($2.tag != "undefined") $$.push_back($2);}
+block   : statements opt_laststatement {$$=Node("Block");$$.push_back($1);if(!$2.isUndefined()) $$.push_back($2);}
 
-statements : /* empty */ {$$=Node("Statements","");}
+statements : /* empty */ {$$=Node("Statements");}
         | statements statement opt_semicolon {$$=$1;$$.push_back($2);}
         
 opt_laststatement: /* empty */ {$$=Node();}
                 | laststatement opt_semicolon {$$=$1;}
 
-laststatement   : RETURN optexplist {$$=Node("return","");$$.push_back($2);}
-                | BREAK {$$=Node("break","");}
+laststatement   : RETURN optexplist {$$=Node("return");$$.push_back($2);}
+                | BREAK {$$=Node("break");}
         
 
 
-statement   : varlist EQUAL explist {$$=Node("=", "");$$.push_back($1);$$.push_back($3);}
+statement   : varlist EQUAL explist {$$=Node("=");$$.push_back($1,$3);}
             | functioncall          
             | DO block END          
             | WHILE exp DO block END
@@ -155,27 +156,27 @@ exp : TRUE      {$$=Node("value", "true");}
     | NUMBER    {$$=Node("number", $1);}
     | STRING       
     | DOTDOTDOT       
-    | prefixexp 
+    | prefixexp {$$=$1;}
     | function
     | tableconstructor 
-    | MINUS exp %prec UNARY
-    | NOT exp %prec UNARY
-    | HASH exp %prec UNARY
-    | exp PLUS exp 
-    | exp MULTIPLY exp 
-    | exp MINUS exp 
-    | exp DIVIDE exp 
-    | exp POW exp 
-    | exp MODULO exp 
-    | exp LT exp 
-    | exp LTE exp 
-    | exp GT exp 
-    | exp GTE exp 
-    | exp EQ exp 
-    | exp NE exp 
-    | exp AND exp 
-    | exp OR exp 
-    | exp DOTDOT exp     
+    | MINUS exp %prec UNARY     {$$=Node($1, "");$$.push_back($2);}
+    | NOT exp %prec UNARY       {$$=Node($1, "");$$.push_back($2);}
+    | HASH exp %prec UNARY      {$$=Node($1, "");$$.push_back($2);}
+    | exp PLUS exp              {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp MULTIPLY exp          {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp MINUS exp             {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp DIVIDE exp            {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp POW exp               {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp MODULO exp            {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp LT exp                {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp LTE exp               {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp GT exp                {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp GTE exp               {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp EQ exp                {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp NE exp                {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp AND exp               {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp OR exp                {$$=Node($2, "");$$.push_back($1,$3);}
+    | exp DOTDOT exp            {$$=Node($2, "");$$.push_back($1,$3);}
     
 function : FUNCTION funcbody  
 
@@ -192,7 +193,7 @@ explist : exp {$$=Node("Explist","");$$.push_back($1);}
 
 prefixexp   : var 
             | functioncall 
-            | POPEN exp PCLOSE 
+            | POPEN exp PCLOSE {$$=$2;}
             
 functioncall: prefixexp args 
             | prefixexp COLON NAME args  

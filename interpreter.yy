@@ -144,21 +144,21 @@ exp : TRUE
     | MINUS exp %prec UNARY
     | NOT exp %prec UNARY
     | HASH exp %prec UNARY
-	| exp PLUS exp 
-	| exp MULTIPLY exp 
-	| exp MINUS exp 
-	| exp DIVIDE exp 
-	| exp POW exp 
-	| exp MODULO exp 
-	| exp LT exp 
-	| exp LTE exp 
-	| exp GT exp 
-	| exp GTE exp 
-	| exp EQ exp 
-	| exp NE exp 
-	| exp AND exp 
-	| exp OR exp 
-	| exp DOTDOT exp     
+    | exp PLUS exp 
+    | exp MULTIPLY exp 
+    | exp MINUS exp 
+    | exp DIVIDE exp 
+    | exp POW exp 
+    | exp MODULO exp 
+    | exp LT exp 
+    | exp LTE exp 
+    | exp GT exp 
+    | exp GTE exp 
+    | exp EQ exp 
+    | exp NE exp 
+    | exp AND exp 
+    | exp OR exp 
+    | exp DOTDOT exp     
     
 function : FUNCTION funcbody  
 

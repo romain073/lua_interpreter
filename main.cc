@@ -15,13 +15,14 @@ int main(int argc, char **argv)
     std::cout << "Parse complete." << std::endl;
     root.dump();
     ofstream myfile;
-    myfile.open("output.dot");
+    myfile.open("tree.dot");
     int id = 0;
     myfile << "digraph {" << endl;
     root.dumpToFile(myfile, id);
     myfile << "}" << endl;
     myfile.close(); 
+    return 0;
   }
   
-  return 0;
+  return 1;
 }

@@ -1,6 +1,8 @@
-/binary.output
-/binary.tab.cc
-/binary.tab.hh
+/interpreter.output
+/interpreter.tab.cc
+/interpreter.tab.hh
 /lex.yy.c
 /parser
 /stack.hh
+/tree.dot
+/tree.pdf

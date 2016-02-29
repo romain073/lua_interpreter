@@ -85,18 +85,38 @@
 %type <Node> var
 %type <Node> exp
 %type <Node> prefixexp
+%type <Node> functioncall
+%type <Node> function
+%type <Node> args
+%type <Node> else
+%type <Node> elseif
+%type <Node> optcommaexp
+%type <Node> namelist
+%type <Node> funcname
+%type <Node> funcbody
+%type <Node> optparlist
+%type <Node> parlist
+%type <Node> funcnamebase
+%type <Node> optcolonname
+%type <Node> eqexplistopt
+%type <Node> optfieldlist
+%type <Node> fieldlist
+%type <Node> field
+%type <Node> tableconstructor
+
+  
 
 %token ENDOFFILE 0 "end of file"
 %%
 
-root : block{root=Node("root");root.push_back($1);}
+root : block {root=Node("root");root.push_back($1);}
 
-block   : statements opt_laststatement {$$=Node("Block");$$.push_back($1);if(!$2.isUndefined()) $$.push_back($2);}
+block   : statements opt_laststatement {$$=Node("Block");$$.push_back($1,$2);}
 
 statements : /* empty */ {$$=Node("Statements");}
         | statements statement opt_semicolon {$$=$1;$$.push_back($2);}
         
-opt_laststatement: /* empty */ {$$=Node();}
+opt_laststatement: /* empty */ {$$=Node("pass");}
                 | laststatement opt_semicolon {$$=$1;}
 
 laststatement   : RETURN optexplist {$$=Node("return");$$.push_back($2);}
@@ -104,61 +124,61 @@ laststatement   : RETURN optexplist {$$=Node("return");$$.push_back($2);}
         
 
 
-statement   : varlist EQUAL explist {$$=Node("=");$$.push_back($1,$3);}
-            | functioncall          
-            | DO block END          
-            | WHILE exp DO block END
-            | REPEAT block UNTIL exp
-            | IF exp THEN block elseif else END
-            | FOR NAME EQUAL exp COMMA exp optcommaexp DO block END
-            | FOR namelist IN explist DO block END
-            | FUNCTION funcname funcbody
-            | LOCAL FUNCTION NAME funcbody
-            | LOCAL namelist eqexplistopt 
+statement   : varlist EQUAL explist             {$$=Node("affectation");$$.push_back($1,$3);}
+            | functioncall                      {$$=$1;}
+            | DO block END                      {$$=Node("do end");$$.push_back($2);}
+            | WHILE exp DO block END            {$$=Node("while");$$.push_back($2,$4);}
+            | REPEAT block UNTIL exp            {$$=Node("repeat");$$.push_back($2,$4);}
+            | IF exp THEN block elseif else END {$$=Node("if");$$.push_back($2,$4);$$.push_back($5,$6);}
+            | FOR NAME EQUAL exp COMMA exp optcommaexp DO block END     {$$=Node("forequal");$$.push_back($2,$4);$$.push_back($6,$7);$$.push_back($8);}
+            | FOR namelist IN explist DO block END      {$$=Node("forin");$$.push_back($2,$4);$$.push_back($6);}
+            | FUNCTION funcname funcbody        {$$=Node("functiondef");$$.push_back($2,$3);}
+            | LOCAL FUNCTION NAME funcbody      {$$=Node("localfunctiondef", $3);$$.push_back($4);}
+            | LOCAL namelist eqexplistopt       {$$=Node("local decl/aff");$$.push_back($2,$3);}
 
-eqexplistopt: /* empty */
-            | EQUAL explist
+eqexplistopt: /* empty */               {$$=Node("pass");}
+            | EQUAL explist             {$$=$2;}
 
-funcname : funcnamebase optcolonname
+funcname : funcnamebase optcolonname    {$$ = Node("funcname");$$.push_back($1,$2);}
 
-funcnamebase : NAME 
-	    | funcnamebase DOT NAME
+funcnamebase : NAME                     {$$=Node("fnname", $1);}
+	    | funcnamebase DOT NAME         {$$=$1;$$.value = $$.value + "." + $3;}
 	    
-optcolonname: /* empty */
-            | COLON NAME
+optcolonname: /* empty */               {$$=Node("pass");}
+            | COLON NAME                {$$=Node("fname",$2);}
 
-funcbody: POPEN optparlist PCLOSE block END
+funcbody: POPEN optparlist PCLOSE block END     {$$=Node("fnbody");$$.push_back($2,$4);}
 
-optparlist:  /* empty */
-        | parlist
+optparlist:  /* empty */                        {$$=Node("pass");}
+        | parlist                               {$$=$1;}
 
 
-optcommaexp  : /* empty */
-        | COMMA exp
+optcommaexp  : /* empty */      {$$=Node("pass");}
+        | COMMA exp             {$$=$2;}
 
  
-elseif  : /* empty */
-        | elseif ELSEIF exp THEN block
+elseif  : /* empty */                           {$$=Node("elseif");}
+        | elseif ELSEIF exp THEN block          {$$=$1;$$.push_back($3,$5);}
 
-else: /* empty */
-    | ELSE block
+else: /* empty */                               {$$=Node("pass");}
+    | ELSE block                                {$$=Node("else");$$.push_back($2);}
 
-var : NAME {$$=Node("Var", $1);}
-    | prefixexp SBRACKETOPEN exp SBRACKETCLOSE 
-    | prefixexp DOT NAME
+var : NAME                                      {$$=Node("Var", $1);}
+    | prefixexp SBRACKETOPEN exp SBRACKETCLOSE  {$$=Node("tableretrieve");$$.push_back($1,$3);}
+    | prefixexp DOT NAME                        {$$=Node("propretrieve");$$.push_back($1,$3);}
 
-varlist : var {$$=Node("varlist","");$$.push_back($1);}
-        | varlist COMMA var {$$=$1;$$.push_back($3);}
+varlist : var                                   {$$=Node("varlist","");$$.push_back($1);}
+        | varlist COMMA var                     {$$=$1;$$.push_back($3);}
         
-exp : TRUE      {$$=Node("value", "true");}
-    | FALSE     {$$=Node("value", "false");}
-    | NIL       {$$=Node("value", "nil");}
-    | NUMBER    {$$=Node("number", $1);}
-    | STRING       
-    | DOTDOTDOT       
-    | prefixexp {$$=$1;}
-    | function
-    | tableconstructor 
+exp : TRUE                      {$$=Node("value", "true");}
+    | FALSE                     {$$=Node("value", "false");}
+    | NIL                       {$$=Node("value", "nil");}
+    | NUMBER                    {$$=Node("number", $1);}
+    | STRING                    {$$=Node("string", $1);}  
+    | DOTDOTDOT                 {$$=Node("DOTDOTDOT", $1);}
+    | prefixexp                 {$$=$1;}
+    | function                  {$$=$1;}
+    | tableconstructor          {$$=$1;}
     | MINUS exp %prec UNARY     {$$=Node($1, "");$$.push_back($2);}
     | NOT exp %prec UNARY       {$$=Node($1, "");$$.push_back($2);}
     | HASH exp %prec UNARY      {$$=Node($1, "");$$.push_back($2);}
@@ -178,48 +198,48 @@ exp : TRUE      {$$=Node("value", "true");}
     | exp OR exp                {$$=Node($2, "");$$.push_back($1,$3);}
     | exp DOTDOT exp            {$$=Node($2, "");$$.push_back($1,$3);}
     
-function : FUNCTION funcbody  
+function : FUNCTION funcbody            {$$=Node("anonfunc");$$.push_back($2);}
 
-parlist : namelist 
-        | namelist COMMA DOTDOTDOT 
-        | DOTDOTDOT 
+parlist : namelist                      {$$=Node("parlist");$$.push_back($1);}
+        | namelist COMMA DOTDOTDOT      {$$=Node("parlist", $3);$$.push_back($1);}
+        | DOTDOTDOT                     {$$=Node("parlist", $1);}
         
 
-namelist: NAME 
-        | namelist COMMA NAME  
+namelist: NAME                  {$$=Node("namelist");$$.push_back(Node("name", $1));}
+        | namelist COMMA NAME   {$$=$1;$$.push_back(Node("name", $3));}
 
 explist : exp {$$=Node("Explist","");$$.push_back($1);}
         | explist COMMA exp {$$=$1;$$.push_back($3);}
 
-prefixexp   : var 
-            | functioncall 
-            | POPEN exp PCLOSE {$$=$2;}
+prefixexp   : var                       {$$=$1;}
+            | functioncall              {$$=$1;}
+            | POPEN exp PCLOSE          {$$=Node("exp");}
             
-functioncall: prefixexp args 
-            | prefixexp COLON NAME args  
+functioncall: prefixexp args            {$$=Node("functioncall");$$.push_back($1,$2);}
+            | prefixexp COLON NAME args {$$=Node("functioncall");$$.push_back($1,$3);$$.push_back($4);}
                 
-args: POPEN optexplist PCLOSE 
-    | tableconstructor 
-    | STRING 
+args: POPEN optexplist PCLOSE {$$=Node("args");$$.push_back($2);}
+    | tableconstructor {$$=Node("tableargs").push_back($1);}
+    | STRING {$$=Node("strargs", $1.erase($1.length()-1,1).erase(0,1));}
 
-optexplist  : /* empty */ 
-            | explist 
+optexplist  : /* empty */ {$$=Node("pass");}
+            | explist {$$=$1;}
 
 				
-tableconstructor : CBRACKETOPEN optfieldlist CBRACKETCLOSE 
+tableconstructor : CBRACKETOPEN optfieldlist CBRACKETCLOSE {$$=Node("tableconstructor");$$.push_back($2);}
 
-optfieldlist    : /* empty */ 
-                | fieldlist optfieldsep 
+optfieldlist    : /* empty */                       {$$=Node("pass");}
+                | fieldlist optfieldsep             {$$=$1;}
                 
 optfieldsep    : /* empty */ 
                 | fieldsep 
                 
-fieldlist   : field 
-            | fieldlist fieldsep field 
+fieldlist   : field                                 {$$=Node("fieldlist");$$.push_back($1);}
+            | fieldlist fieldsep field              {$$=$1;$$.push_back($3);}
 
-field   : SBRACKETOPEN exp SBRACKETCLOSE EQUAL exp 
-        | NAME EQUAL exp 
-        | exp 
+field   : SBRACKETOPEN exp SBRACKETCLOSE EQUAL exp  {$$=Node("brackets").push_back($2,$5);}
+        | NAME EQUAL exp                            {$$=Node("name", $1).push_back($3);}
+        | exp                                       {$$=Node("simple").push_back($1);}
 
 fieldsep    : COMMA 
             | SEMICOLON 

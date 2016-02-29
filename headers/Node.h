@@ -19,9 +19,9 @@ public:
     }
 
     Node() {
-        tag = "uninitialised";
-        value = "uninitialised";
-    } // Bison needs this.
+        tag = "null";
+        value = "null";
+    }
 
     void dump(int depth = 0) {
         for (int i = 0; i < depth; i++)
@@ -32,15 +32,14 @@ public:
             (*i).dump(depth + 1);
     }
     
-    void push_back(Node n1){
+    Node push_back(Node n1){
         this->children.push_back(n1);
+        return *this;
     }
-    void push_back(Node n1, Node n2){
+    Node push_back(Node n1, Node n2){
         this->children.push_back(n1);
         this->children.push_back(n2);
-    }
-    bool isUndefined(){
-        return this->tag == "uninitialised" && this->value == "uninitialised";
+        return *this;
     }
 
     int dumpToFile(ofstream &f, int &id) {

@@ -31,14 +31,10 @@ public:
         for (i = children.begin(); i != children.end(); i++)
             (*i).dump(depth + 1);
     }
-    
-    Node push_back(Node n1){
-        this->children.push_back(n1);
-        return *this;
-    }
-    Node push_back(Node n1, Node n2){
-        this->children.push_back(n1);
-        this->children.push_back(n2);
+
+    Node operator+(Node n)
+    {
+        this->children.push_back(n);
         return *this;
     }
 

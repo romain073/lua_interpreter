@@ -1,3 +1,16 @@
+x = 7
+print(x)
+y = (10+x)*2
+z = y - x
+print(z)
+
+
+
+
+
+
+
+
 print "a"
 print "B"
 print "c"

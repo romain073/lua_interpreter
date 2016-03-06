@@ -109,7 +109,7 @@
 %token ENDOFFILE 0 "end of file"
 %%
 
-root : block                                    {root=Node("root")+$1;}
+root : block                                    {root=$1;}
 
 block   : statements opt_laststatement          {$$=Node("Block")+$1+$2;}
 

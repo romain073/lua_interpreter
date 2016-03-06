@@ -1,6 +1,7 @@
 #include<iostream>
 #include "interpreter.tab.hh"
 #include "headers/Node.h"
+#include "headers/Environment.h"
 #include <fstream>
 extern Node root;
 void yy::parser::error(std::string const&err)
@@ -21,6 +22,8 @@ int main(int argc, char **argv)
     root.dumpToFile(myfile, id);
     myfile << "}" << endl;
     myfile.close(); 
+    Environment* e = new Environment();
+    root.execute(e);
     return 0;
   }
   

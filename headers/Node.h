@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "Environment.h"
 using namespace std;
 
 class Node {
@@ -50,6 +51,62 @@ public:
             f << "id" << myID << " -> " << "id" << childID << ";" << endl;
         }
         return myID;
+    }
+    
+    int execute(Environment* e){
+        //cout << "executing "<< this->tag << endl;
+        /*if(this->tag == "root"){
+            for(auto i : children){
+                i.execute(e);
+            }
+        } */
+        
+        if (this->tag == "Block") {
+            children.front().execute(e);
+            children.back().execute(e);
+        } else if (this->tag == "pass") {
+            
+        } else if (this->tag == "Statements") {
+            for(auto i : children){
+                i.execute(e);
+            }
+        }else if (this->tag == "args") {
+            int ret = -1;
+            for(auto i : children){
+                ret = i.execute(e);
+            }
+            return ret;
+        } else if (this->tag == "affectation") {
+            e->add(children.front().children.front().value, children.back().children.front().execute(e));
+        } else if (this->tag == "exp") {
+            
+            return children.front().execute(e);
+        } else if (this->tag == "Explist") {
+            return children.front().execute(e);
+        } else if (this->tag == "+") {
+            return children.front().execute(e)+children.back().execute(e);
+        } else if (this->tag == "*") {
+            return children.front().execute(e)*children.back().execute(e);
+        } else if (this->tag == "/") {
+            return children.front().execute(e)/children.back().execute(e);
+        } else if (this->tag == "-") {
+            return children.front().execute(e)-children.back().execute(e);
+        } else if (this->tag == "number") {
+            return stoi(this->value);
+        } else if (this->tag == "Var") {
+            return e->get(this->value);
+        } else if (this->tag == "functioncall") {
+            if(children.front().value == "print"){
+                cout << "   Print => " << children.back().execute(e) << endl;
+            }else{
+                cout << "unknown function"<<endl;
+                return -1;
+            }
+        } else {
+            cout << "Not implemented - " << this->tag << endl;
+        }
+            
+        return 1;
     }
 
 };

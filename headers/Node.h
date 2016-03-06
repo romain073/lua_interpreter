@@ -5,8 +5,11 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "Value.h"
 #include "Environment.h"
 using namespace std;
+
+
 
 class Node {
 public:
@@ -53,13 +56,12 @@ public:
         return myID;
     }
     
-    int execute(Environment* e){
-        //cout << "executing "<< this->tag << endl;
-        /*if(this->tag == "root"){
-            for(auto i : children){
-                i.execute(e);
-            }
-        } */
+    Value execute(Environment* e){
+        /*
+        for(auto i : children){
+        i.execute(e);
+        }
+        */
         
         if (this->tag == "Block") {
             children.front().execute(e);
@@ -71,18 +73,30 @@ public:
                 i.execute(e);
             }
         }else if (this->tag == "args") {
-            int ret = -1;
+            Value ret;
             for(auto i : children){
                 ret = i.execute(e);
             }
             return ret;
         } else if (this->tag == "affectation") {
-            e->add(children.front().children.front().value, children.back().children.front().execute(e));
-        } else if (this->tag == "exp") {
-            
-            return children.front().execute(e);
+            Value varlist = children.front().execute(e);
+            Value explist = children.back().execute(e);
+            // todo assert size equals
+            for(int i = 0;i<varlist.list_val.size();i++){
+                e->add(varlist.list_val[i].string_val, explist.list_val[i]);
+            }
         } else if (this->tag == "Explist") {
-            return children.front().execute(e);
+            vector<Value> list;
+            for(auto i : children){
+                list.push_back(i.execute(e));
+            }
+            return Value(list);
+        } else if (this->tag == "varlist") {
+            vector<Value> list;
+            for(auto i : children){
+                list.push_back(i.value);
+            }
+            return Value(list);
         } else if (this->tag == "+") {
             return children.front().execute(e)+children.back().execute(e);
         } else if (this->tag == "*") {
@@ -92,12 +106,15 @@ public:
         } else if (this->tag == "-") {
             return children.front().execute(e)-children.back().execute(e);
         } else if (this->tag == "number") {
-            return stoi(this->value);
+            return Value(stoi(this->value));
+        } else if (this->tag == "string") {
+            return Value(this->value);
         } else if (this->tag == "Var") {
             return e->get(this->value);
         } else if (this->tag == "functioncall") {
             if(children.front().value == "print"){
-                cout << "   Print => " << children.back().execute(e) << endl;
+                Value args = children.back().execute(e);
+                cout << "   Print => " << args.list_val[0] << " "<< args.list_val[0].int_val << " " << args.list_val[0].string_val << endl;
             }else{
                 cout << "unknown function"<<endl;
                 return -1;
@@ -106,7 +123,7 @@ public:
             cout << "Not implemented - " << this->tag << endl;
         }
             
-        return 1;
+        return Value();
     }
 
 };

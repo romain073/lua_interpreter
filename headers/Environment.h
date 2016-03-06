@@ -4,26 +4,24 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include "Value.h"
 using namespace std;
 
 
 
 class Environment {
 public:
-    map<string, int> name_space;
+    map<string, Value> name_space;
     
     Environment() {
     }
     
-    void add(string s, int value){
+    void add(string s, Value value){
+        //cout << "add" << s << " => " << value << endl;
         name_space[s] = value;
     }
-    int get(string s){
+    Value get(string s){
         return name_space[s];
-    }
-
-    void dump() {
-        std::cout << "OK!" << std::endl;
     }
 };
 

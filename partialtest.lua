@@ -1,11 +1,11 @@
-x = 7
+x = 7.05
 print(x)
 y = (10+x)*2
 z = y - x
 print(z)
+print("a")
 
-
-
+print(13+(22-11)/1*44)
 
 
 

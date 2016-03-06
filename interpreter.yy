@@ -213,7 +213,7 @@ explist : exp {$$=Node("Explist")+$1;}
 
 prefixexp   : var                       {$$=$1;}
             | functioncall              {$$=$1;}
-            | POPEN exp PCLOSE          {$$=Node("exp");}
+            | POPEN exp PCLOSE          {$$=$2;}
             
 functioncall: prefixexp args            {$$=Node("functioncall")+$1+$2;}
             | prefixexp COLON NAME args {$$=Node("functioncall")+$1+$3+$4;}

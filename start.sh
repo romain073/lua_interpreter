@@ -1,1 +1,1 @@
-make clean && make && head partialtest.lua | ./parser && dot -Tpdf tree.dot -otree.pdf;
+make && ./parser partialtest.lua && dot -Tpdf tree.dot -otree.pdf;

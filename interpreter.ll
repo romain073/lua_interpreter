@@ -6,11 +6,12 @@
 
 
 NBRS [0-9]+
+NBRS_HX [0-9a-f]+
 
 %%
 
 \-\-[^\n]*\n /* comment */
-({NBRS}|{NBRS}?\.{NBRS})([Ee][-+]?{NBRS})?       { return yy::parser::make_NUMBER(yytext); }
+(({NBRS}|{NBRS}?\.{NBRS})([Ee][-+]?{NBRS})?|0x{NBRS_HX})       { return yy::parser::make_NUMBER(yytext); }
 true         { return yy::parser::make_TRUE(yytext); }
 false         { return yy::parser::make_FALSE(yytext); }
 nil         { return yy::parser::make_NIL(yytext); }

@@ -106,15 +106,54 @@ public:
         } else if (this->tag == "-") {
             return children.front().execute(e)-children.back().execute(e);
         } else if (this->tag == "number") {
-            return Value(stoi(this->value));
+            
+            
+            if(this->value.find("0x") == 0){
+                return Value(stoi(this->value.erase(0,2), 0,16)); //hex
+            }else {
+                int expindex = this->value.find("e");
+                if(expindex == string::npos){
+                    expindex = this->value.find("E");
+                }
+                if(expindex == string::npos){
+                    return Value::FromNumber(this->value);
+                }
+                int exponent = stoi(this->value.substr(expindex+1));
+                
+                Value v = Value::FromNumber(this->value.substr(0,expindex));
+                if(exponent == 0){
+                    return v;
+                }
+                
+                int mult = 1;
+                for(int i = 0; i<abs(exponent);i++){
+                    mult*=10;
+                }
+                
+                Value m = Value(mult);
+                if(exponent<0)
+                    return v/m;
+                else
+                    return v*m;
+                
+                
+            }
         } else if (this->tag == "string") {
             return Value(this->value);
+        } else if (this->tag == "str_arg") {
+            vector<Value> v;
+            v.push_back(children.front().execute(e));
+            return Value(v);
         } else if (this->tag == "Var") {
             return e->get(this->value);
         } else if (this->tag == "functioncall") {
             if(children.front().value == "print"){
                 Value args = children.back().execute(e);
-                cout << "   Print => " << args.list_val[0] << " "<< args.list_val[0].int_val << " " << args.list_val[0].string_val << endl;
+                cout << "   Print =>";
+                for(int i=0;i<args.list_val.size();i++){
+                    cout << " " << args.list_val[i];
+                }
+                cout << endl;
             }else{
                 cout << "unknown function"<<endl;
                 return -1;

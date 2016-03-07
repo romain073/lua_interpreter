@@ -103,6 +103,7 @@
 %type <Node> fieldlist
 %type <Node> field
 %type <Node> tableconstructor
+%type <Node> str
 
   
 
@@ -174,7 +175,7 @@ exp : TRUE                      {$$=Node("value", "true");}
     | FALSE                     {$$=Node("value", "false");}
     | NIL                       {$$=Node("value", "nil");}
     | NUMBER                    {$$=Node("number", $1);}
-    | STRING                    {$$=Node("string", $1.erase($1.length()-1,1).erase(0,1));}  
+    | str                       {$$=$1;}  
     | DOTDOTDOT                 {$$=Node("DOTDOTDOT", $1);}
     | prefixexp                 {$$=$1;}
     | function                  {$$=$1;}
@@ -220,7 +221,9 @@ functioncall: prefixexp args            {$$=Node("functioncall")+$1+$2;}
                 
 args: POPEN optexplist PCLOSE           {$$=Node("args")+$2;}
     | tableconstructor                  {$$=Node("tableargs")+$1;}
-    | STRING                            {$$=Node("strargs", $1.erase($1.length()-1,1).erase(0,1));}
+    | str                            {$$=Node("str_arg")+$1;}
+
+str: STRING                             {$$=Node("string", $1.erase($1.length()-1,1).erase(0,1));}
 
 optexplist  : /* empty */               {$$=Node("pass");}
             | explist                   {$$=$1;}

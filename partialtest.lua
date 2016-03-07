@@ -1,9 +1,32 @@
+
+
+print(314.16e-2)
+print(3146E2)
+
+print(0x123f)
+print(0.123)
+print(.123)
+print("a","b")
+print "a" 
+print "Test" 
+
+
+
+
+
+
+
+
+
+
+
+
+
 x = 7.05
 print(x)
 y = (10+x)*2
 z = y - x
 print(z)
-print("a")
 
 print(13+(22-11)/1*44)
 

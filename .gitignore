@@ -2,7 +2,7 @@
 /interpreter.tab.cc
 /interpreter.tab.hh
 /lex.yy.c
-/parser
+/int
 /stack.hh
 /tree.dot
 /tree.pdf

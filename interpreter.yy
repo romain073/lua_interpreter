@@ -131,7 +131,7 @@ statement   : varlist EQUAL explist             {$$=Node("affectation")+$1+$3;}
             | WHILE exp DO block END            {$$=Node("while")+$2+$4;}
             | REPEAT block UNTIL exp            {$$=Node("repeat")+$2+$4;}
             | IF exp THEN block elseif else END {$$=Node("if")+$2+$4+$5+$6;}
-            | FOR NAME EQUAL exp COMMA exp optcommaexp DO block END     {$$=Node("forequal")+$2+$4+$6+$7+$8;}
+            | FOR NAME EQUAL exp COMMA exp optcommaexp DO block END     {$$=Node("forequal")+Node("name", $2)+$4+$6+$7+$9;}
             | FOR namelist IN explist DO block END      {$$=Node("forin")+$2+$4+$6;}
             | FUNCTION funcname funcbody        {$$=Node("functiondef")+$2+$3;}
             | LOCAL FUNCTION NAME funcbody      {$$=Node("localfunctiondef", $3)+$4;}
@@ -166,7 +166,7 @@ else: /* empty */                               {$$=Node("pass");}
 
 var : NAME                                      {$$=Node("Var", $1);}
     | prefixexp SBRACKETOPEN exp SBRACKETCLOSE  {$$=Node("tableretrieve")+$1+$3;}
-    | prefixexp DOT NAME                        {$$=Node("propretrieve")+$1+$3;}
+    | prefixexp DOT NAME                        {$$=Node("propretrieve")+$1+Node("Var", $3);}
 
 varlist : var                                   {$$=Node("varlist")+$1;}
         | varlist COMMA var                     {$$=$1+$3;}

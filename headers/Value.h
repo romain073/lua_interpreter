@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 
@@ -102,6 +103,34 @@ struct Value
         cout << "Type not handled in - operator.";
         throw;
     }
+    bool operator>(Value v)
+    {
+        if(this->type == TYPE_INT && v.type == TYPE_INT)
+            return int_val > v.int_val;
+        cout << "Type not handled in - operator.";
+        throw;
+    }
+    
+    string print() {
+        switch(this->type){
+            case TYPE_INT:
+            	return to_string(this->int_val);
+            case TYPE_STRING:
+            	return this->string_val;
+            case TYPE_DOUBLE:
+            	return to_string(this->double_val);
+            case TYPE_BOOLEAN:
+            	return to_string(this->bool_val);
+            case TYPE_LIST:{
+                string str = "";
+                for(auto i : list_val){
+                    str+=i.print()+",";
+                }
+                return str;}
+            case TYPE_NULL:
+            	return "NULL";
+        }
+    }
     
     
 };
@@ -128,6 +157,6 @@ inline ostream& operator<<(ostream& os, const Value& obj) {
         	break;
     }
     return os;
-}   
+}
 
 #endif  /* VALUE_H */

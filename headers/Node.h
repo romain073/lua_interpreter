@@ -72,7 +72,44 @@ public:
             for(auto i : children){
                 i.execute(e);
             }
-        }else if (this->tag == "args") {
+        } else if (this->tag == "forequal") {
+            int counter = 0;
+            string var;
+            Value from;
+            Value to;
+            Value step;
+            for(auto i : children){
+                switch(counter){
+                    case 0:
+                        var = i.value;
+                        break;
+                    case 1:
+                        from = i.execute(e);
+                        break;
+                    case 2:
+                        to = i.execute(e);
+                        break;
+                    case 3:
+                        if(i.tag == "pass"){
+                            if(from > to){
+                                step = Value(-1);
+                            }else{
+                                step = Value(1);
+                            }
+                        }else{
+                            step = i.execute(e);
+                        }
+                        break;
+                    
+                }
+                
+                counter++;
+            }
+            for(int i = from.int_val;i<=to.int_val;i+=step.int_val){
+                e->add(var, Value(i));
+                children.back().execute(e);
+            }
+        } else if (this->tag == "args") {
             Value ret;
             for(auto i : children){
                 ret = i.execute(e);
@@ -147,16 +184,40 @@ public:
         } else if (this->tag == "Var") {
             return e->get(this->value);
         } else if (this->tag == "functioncall") {
-            if(children.front().value == "print"){
-                Value args = children.back().execute(e);
-                cout << "   Print =>";
+            Value args = children.back().execute(e);
+            if(children.front().tag == "propretrieve"){
+                string name;
+                for(auto i : children.front().children){
+                    name+=i.value;
+                }   
+                if(name == "ioread"){
+                    string param = args.list_val.front().string_val;
+                    if(param == "*number"){
+                        string input;
+                        cin >> input;
+                        return Value::FromNumber(input);
+                    } else {
+                        cout << "invalid param for io.read";
+                        throw;
+                    }
+                    
+                } else if(name == "iowrite"){
+                    cout << args.list_val.front().print();
+                } else {
+                    cout << "unknown function call " << name;
+                    throw;
+                }
+            } else if(children.front().value == "print"){
                 for(int i=0;i<args.list_val.size();i++){
-                    cout << " " << args.list_val[i];
+                    cout << args.list_val[i].print();
+                    if(i != args.list_val.size()-1){
+                        cout << "\t";
+                    }
                 }
                 cout << endl;
             }else{
-                cout << "unknown function"<<endl;
-                return -1;
+                cout << "unknown function " << children.front().value<<endl;
+                throw;
             }
         } else {
             cout << "Not implemented - " << this->tag << endl;

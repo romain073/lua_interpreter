@@ -26,6 +26,6 @@ int main(int argc, char **argv)
     root.execute(e);
     return 0;
   }
-  
+  std::cout << "Parse error." << std::endl;
   return 1;
 }

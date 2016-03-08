@@ -72,37 +72,20 @@ public:
             }
         } else if (this->tag == "forequal") {
             int counter = 0;
-            string var;
-            Value from;
-            Value to;
+            string var = children[0].value;
+            Value from = children[1].execute(e);
+            Value to = children[2].execute(e);
             Value step;
-            for(auto i : children){
-                switch(counter){
-                    case 0:
-                        var = i.value;
-                        break;
-                    case 1:
-                        from = i.execute(e);
-                        break;
-                    case 2:
-                        to = i.execute(e);
-                        break;
-                    case 3:
-                        if(i.tag == "pass"){
-                            if(from > to){
-                                step = Value(-1);
-                            }else{
-                                step = Value(1);
-                            }
-                        }else{
-                            step = i.execute(e);
-                        }
-                        break;
-                    
+            if(children[3].tag == "pass"){
+                if(from > to) {
+                    step = Value(-1);
+                } else {
+                    step = Value(1);
                 }
-                
-                counter++;
+            } else {
+                step = children[3].execute(e);
             }
+
             for(int i = from.int_val;i<=to.int_val;i+=step.int_val){
                 e->add(var, Value(i));
                 children.back().execute(e);

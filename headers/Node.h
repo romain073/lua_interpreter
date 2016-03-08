@@ -66,6 +66,15 @@ public:
             children.back().execute(e);
         } else if (this->tag == "pass") {
             
+        } else if (this->tag == "value") {
+            if(this->value == "true"){
+                return Value(true);
+            } else if(this->value == "false"){
+                return Value(false);
+            } else {
+                cout << "Unsupported value " << this->value;
+                throw;
+            }
         } else if (this->tag == "Statements") {
             for(auto i : children){
                 i.execute(e);
@@ -93,8 +102,16 @@ public:
         } else if (this->tag == "if") {
             if(children.front().execute(e).isTrue()){
                 children[1].execute(e);
+                return Value();
             }
-            return Value(1);
+            Node elseif = children[2];
+            for(int i = 0;i<elseif.children.size();i+=2){
+                if(elseif.children[i].execute(e).isTrue()){
+                    elseif.children[i+1].execute(e);
+                    return Value();
+                }
+            }
+            children[3].children.front().execute(e);
         } else if (this->tag == "args") {
             Value ret;
             for(auto i : children){

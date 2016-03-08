@@ -31,9 +31,8 @@ public:
         for (int i = 0; i < depth; i++)
             cout << "  ";
         cout << tag << ":" << value << endl;
-        list<Node>::iterator i;
-        for (i = children.begin(); i != children.end(); i++)
-            (*i).dump(depth + 1);
+        for(auto i : children)
+            i.dump(depth + 1);
     }
 
     Node operator+(Node n)
@@ -48,9 +47,8 @@ public:
         if(value!="")
             f << " -> " << value;
         f << "\"];" << endl;
-        list<Node>::iterator i;
-        for (i = children.begin(); i != children.end(); i++) {
-            int childID = (*i).dumpToFile(f, id);
+        for(auto i : children) {
+            int childID = i.dumpToFile(f, id);
             f << "id" << myID << " -> " << "id" << childID << ";" << endl;
         }
         return myID;

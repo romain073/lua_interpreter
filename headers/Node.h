@@ -14,7 +14,7 @@ using namespace std;
 class Node {
 public:
     string tag, value;
-    list<Node> children;
+    vector<Node> children;
 
     Node(string t, string v) : tag(t), value(v) {
     }
@@ -109,9 +109,7 @@ public:
             }
         } else if (this->tag == "if") {
             if(children.front().execute(e).isTrue()){
-                list<Node>::iterator it = children.begin();
-                advance(it, 1);
-                it->execute(e);
+                children[1].execute(e);
             }
             return Value(1);
         } else if (this->tag == "args") {

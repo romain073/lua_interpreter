@@ -55,12 +55,6 @@ public:
     }
     
     Value execute(Environment* e){
-        /*
-        for(auto i : children){
-        i.execute(e);
-        }
-        */
-        
         if (this->tag == "Block") {
             children.front().execute(e);
             children.back().execute(e);
@@ -73,7 +67,7 @@ public:
                 return Value(false);
             } else {
                 cout << "Unsupported value " << this->value;
-                throw;
+                exit(1);
             }
         } else if (this->tag == "Statements") {
             for(auto i : children){
@@ -112,6 +106,7 @@ public:
                 }
             }
             children[3].children.front().execute(e);
+            return Value();
         } else if (this->tag == "args") {
             Value ret;
             for(auto i : children){
@@ -205,14 +200,14 @@ public:
                         return Value::FromNumber(input);
                     } else {
                         cout << "invalid param for io.read";
-                        throw;
+                        exit(1);
                     }
                     
                 } else if(name == "iowrite"){
                     cout << args.list_val.front().print();
                 } else {
                     cout << "unknown function call " << name;
-                    throw;
+                    exit(1);
                 }
             } else if(children.front().value == "print"){
                 for(int i=0;i<args.list_val.size();i++){
@@ -224,7 +219,7 @@ public:
                 cout << endl;
             }else{
                 cout << "unknown function " << children.front().value<<endl;
-                throw;
+                exit(1);
             }
         } else {
             cout << "Not implemented - " << this->tag << endl;

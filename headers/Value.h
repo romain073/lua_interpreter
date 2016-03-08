@@ -53,7 +53,7 @@ struct Value
             case TYPE_INT:
             	return this->int_val != 0;
             case TYPE_STRING:
-            	return this->string_val != "";
+            	return this->string_val.length() != 0;
             case TYPE_DOUBLE:
             	return this->double_val != 0;
             case TYPE_BOOLEAN:
@@ -75,7 +75,7 @@ struct Value
         if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
             return Value(double_val + v.double_val);
         cout << "Type not handled in + operator.";
-        throw;
+        exit(1);
     }
     Value operator*(Value v)
     {
@@ -88,7 +88,7 @@ struct Value
         if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
             return Value(double_val * v.double_val);
         cout << "Type not handled in * operator.";
-        throw;
+        exit(1);
     }
     Value operator/(Value v)
     {
@@ -101,7 +101,7 @@ struct Value
         if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
             return Value(double_val / v.double_val);
         cout << "Type not handled in / operator.";
-        throw;
+        exit(1);
     }
     Value operator-(Value v)
     {
@@ -114,28 +114,28 @@ struct Value
         if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
             return Value(double_val - v.double_val);
         cout << "Type not handled in - operator.";
-        throw;
+        exit(1);
     }
     Value operator%(Value v)
     {
         if(this->type == TYPE_INT && v.type == TYPE_INT)
             return Value(int_val % v.int_val);
         cout << "Type not handled in % operator.";
-        throw;
+        exit(1);
     }
     Value operator==(Value v)
     {
         if(this->type == TYPE_INT && v.type == TYPE_INT)
             return Value(int_val == v.int_val);
         cout << "Type not handled in == operator.";
-        throw;
+        exit(1);
     }
     bool operator>(Value v)
     {
         if(this->type == TYPE_INT && v.type == TYPE_INT)
             return int_val > v.int_val;
         cout << "Type not handled in - operator.";
-        throw;
+        exit(1);
     }
     
     string print() {

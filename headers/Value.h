@@ -48,8 +48,21 @@ struct Value
         type = TYPE_LIST;
     }
     
-    bool isBoolean(){
-        return type == TYPE_BOOLEAN;
+    bool isTrue(){
+        switch(this->type){
+            case TYPE_INT:
+            	return this->int_val != 0;
+            case TYPE_STRING:
+            	return this->string_val != "";
+            case TYPE_DOUBLE:
+            	return this->double_val != 0;
+            case TYPE_BOOLEAN:
+            	return this->bool_val;
+            case TYPE_LIST:
+                return list_val.size()!=0;
+            case TYPE_NULL:
+            	return false;
+        }
     }
     Value operator+(Value v)
     {
@@ -101,6 +114,20 @@ struct Value
         if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
             return Value(double_val - v.double_val);
         cout << "Type not handled in - operator.";
+        throw;
+    }
+    Value operator%(Value v)
+    {
+        if(this->type == TYPE_INT && v.type == TYPE_INT)
+            return Value(int_val % v.int_val);
+        cout << "Type not handled in % operator.";
+        throw;
+    }
+    Value operator==(Value v)
+    {
+        if(this->type == TYPE_INT && v.type == TYPE_INT)
+            return Value(int_val == v.int_val);
+        cout << "Type not handled in == operator.";
         throw;
     }
     bool operator>(Value v)

@@ -109,6 +109,13 @@ public:
                 e->add(var, Value(i));
                 children.back().execute(e);
             }
+        } else if (this->tag == "if") {
+            if(children.front().execute(e).isTrue()){
+                list<Node>::iterator it = children.begin();
+                advance(it, 1);
+                it->execute(e);
+            }
+            return Value(1);
         } else if (this->tag == "args") {
             Value ret;
             for(auto i : children){
@@ -142,6 +149,10 @@ public:
             return children.front().execute(e)/children.back().execute(e);
         } else if (this->tag == "-") {
             return children.front().execute(e)-children.back().execute(e);
+        } else if (this->tag == "%") {
+            return children.front().execute(e)%children.back().execute(e);
+        } else if (this->tag == "==") {
+            return children.front().execute(e)==children.back().execute(e);
         } else if (this->tag == "number") {
             
             

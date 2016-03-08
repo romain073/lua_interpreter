@@ -5,8 +5,8 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "Value.h"
-#include "Environment.h"
+#include "Value.cpp"
+#include "Environment.cpp"
 using namespace std;
 
 

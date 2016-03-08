@@ -1,7 +1,7 @@
 #include<iostream>
 #include "interpreter.tab.hh"
-#include "headers/Node.h"
-#include "headers/Environment.h"
+#include "headers/Node.cpp"
+#include "headers/Environment.cpp"
 #include <fstream>
 #include <string.h>
 extern Node root;

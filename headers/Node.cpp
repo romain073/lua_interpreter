@@ -113,8 +113,12 @@ public:
 
             for(int i = from.int_val;i<=to.int_val;i+=step.int_val){
                 e->add(var, Value(i));
-                if(children.back()->execute(e).isBreak()){
+                Value v = children.back()->execute(e);
+                if(v.isBreak()){
                     return Value();
+                }
+                if(v.isReturn()){
+                    return v;
                 }
             }
         } else if (this->tag == "if") {

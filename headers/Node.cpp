@@ -96,7 +96,10 @@ public:
                 }
             }
         } else if (this->tag == "forequal") {
+<<<<<<< HEAD
+=======
             int counter = 0;
+>>>>>>> 57d86227d31cdeca15ac1930b90c182978331716
             string var = children[0]->value;
             Value from = children[1]->execute(e);
             Value to = children[2]->execute(e);
@@ -126,7 +129,11 @@ public:
                 return children[1]->execute(e);
             }
             Node* elseif = children[2];
+<<<<<<< HEAD
+            for(unsigned i = 0;i<elseif->children.size();i+=2){
+=======
             for(int i = 0;i<elseif->children.size();i+=2){
+>>>>>>> 57d86227d31cdeca15ac1930b90c182978331716
                 if(elseif->children[i]->execute(e).isTrue()){
                     return elseif->children[i+1]->execute(e);
                 }
@@ -142,7 +149,7 @@ public:
             Value varlist = children.front()->execute(e);
             Value explist = children.back()->execute(e);
             // todo assert size equals
-            for(int i = 0;i<varlist.list_val.size();i++){
+            for(unsigned i = 0;i<varlist.list_val.size();i++){
                 e->add(varlist.list_val[i].string_val, explist.list_val[i]);
             }
         } else if (this->tag == "Explist") {
@@ -179,7 +186,7 @@ public:
             if(this->value.find("0x") == 0){
                 return Value(stoi(this->value.erase(0,2), 0,16)); //hex
             }else {
-                int expindex = this->value.find("e");
+                size_t expindex = this->value.find("e");
                 if(expindex == string::npos){
                     expindex = this->value.find("E");
                 }
@@ -252,7 +259,11 @@ public:
                     exit(1);
                 }
             } else if(children.front()->value == "print"){
+<<<<<<< HEAD
+                for(unsigned i=0;i<args.list_val.size();i++){
+=======
                 for(int i=0;i<args.list_val.size();i++){
+>>>>>>> 57d86227d31cdeca15ac1930b90c182978331716
                     cout << args.list_val[i].print();
                     if(i != args.list_val.size()-1){
                         cout << "\t";
@@ -274,7 +285,11 @@ public:
                     cout << "Params number does not match...";
                     exit(1);
                 }
+<<<<<<< HEAD
+                for(unsigned i = 0; i<args.list_val.size();i++){
+=======
                 for(int i = 0; i<args.list_val.size();i++){
+>>>>>>> 57d86227d31cdeca15ac1930b90c182978331716
                     e_child.add(names.list_val[i].string_val, args.list_val[i]);
                 }
                 Value v = fn->children.back()->execute(&e_child);

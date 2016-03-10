@@ -102,6 +102,9 @@ struct Value
                 return list_val.size()!=0;
             case TYPE_NULL:
             	return false;
+        	default:
+                cout << "Unhandled isTrue() for type "<< type << endl;
+                exit(1);
         }
     }
     Value operator+(Value v)

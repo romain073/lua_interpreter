@@ -61,22 +61,37 @@ public:
     
     Value execute(Environment* e){
         if (this->tag == "Block") {
-            children.front()->execute(e);
-            children.back()->execute(e);
+            Value v = children.front()->execute(e);
+            if(v.isReturn()){
+                return v;
+            }
+            return children.back()->execute(e);
         } else if (this->tag == "pass") {
             
+        } else if (this->tag == "return") {
+            Value ret = children.front()->execute(e);
+            
+            if(ret.isSingleElementList()){
+                return ret.list_val[0].setReturn();
+            }
+            return ret.setReturn();
         } else if (this->tag == "value") {
             if(this->value == "true"){
                 return Value(true);
             } else if(this->value == "false"){
                 return Value(false);
+            } else if(this->value == "nil"){
+                return Value::NIL();
             } else {
                 cout << "Unsupported value " << this->value;
                 exit(1);
             }
         } else if (this->tag == "Statements") {
             for(auto i : children){
-                i->execute(e);
+                Value v = i->execute(e);
+                if(v.isReturn()){
+                    return v;
+                }
             }
         } else if (this->tag == "forequal") {
             int counter = 0;
@@ -100,18 +115,15 @@ public:
             }
         } else if (this->tag == "if") {
             if(children.front()->execute(e).isTrue()){
-                children[1]->execute(e);
-                return Value();
+                return children[1]->execute(e);
             }
             Node* elseif = children[2];
             for(int i = 0;i<elseif->children.size();i+=2){
                 if(elseif->children[i]->execute(e).isTrue()){
-                    elseif->children[i+1]->execute(e);
-                    return Value();
+                    return elseif->children[i+1]->execute(e);
                 }
             }
-            children[3]->children.front()->execute(e);
-            return Value();
+            return children[3]->children.front()->execute(e);
         } else if (this->tag == "args") {
             Value ret;
             for(auto i : children){
@@ -149,6 +161,8 @@ public:
             return children.front()->execute(e)%children.back()->execute(e);
         } else if (this->tag == "==") {
             return children.front()->execute(e)==children.back()->execute(e);
+        } else if (this->tag == "<") {
+            return children.front()->execute(e)<children.back()->execute(e);
         } else if (this->tag == "number") {
             
             
@@ -190,6 +204,19 @@ public:
             return Value(v);
         } else if (this->tag == "Var") {
             return e->get(this->value);
+        } else if (this->tag == "parlist") {
+            return children.front()->execute(e);
+        } else if (this->tag == "namelist") {
+            vector<Value> names;
+            for(auto i : children){
+                names.push_back(i->value);
+            }
+            return Value(names);
+        } else if (this->tag == "funcname") {
+            return Value(children.front()->value); // todo - implement colon syntax
+        } else if (this->tag == "functiondef") {
+            string name = children.front()->execute(e).string_val;
+            e->add(name, Value(children.back()));
         } else if (this->tag == "functioncall") {
             Value args = children.back()->execute(e);
             if(children.front()->tag == "propretrieve"){
@@ -223,11 +250,31 @@ public:
                 }
                 cout << endl;
             }else{
-                cout << "unknown function " << children.front()->value<<endl;
-                exit(1);
+                string name = children.front()->value;
+                Value retrieved = e->get(name);
+                if(!retrieved.isFunction()) {
+                    cout << "unknown function " << name <<endl;
+                    exit(1);
+                }
+                Node* fn = retrieved.function_val;
+                Value names = fn->children.front()->execute(e);
+                Environment e_child = e->clone();
+                if(args.list_val.size() != names.list_val.size()){
+                    cout << "args" << args << " - names " << names << endl;
+                    cout << "Params number does not match...";
+                    exit(1);
+                }
+                for(int i = 0; i<args.list_val.size();i++){
+                    e_child.add(names.list_val[i].string_val, args.list_val[i]);
+                }
+                Value v = fn->children.back()->execute(&e_child);
+                if(v.isReturn()){
+                    return v.setReturn(false);
+                }
             }
         } else {
             cout << "Not implemented - " << this->tag << endl;
+            exit(1);
         }
             
         return Value();

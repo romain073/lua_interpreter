@@ -17,11 +17,16 @@ public:
     }
     
     void add(string s, Value value){
-        //cout << "add" << s << " => " << value << endl;
         name_space[s] = value;
     }
     Value get(string s){
         return name_space[s];
+    }
+    
+    Environment clone(){
+        Environment e;
+        e.name_space = name_space;
+        return e;
     }
 };
 

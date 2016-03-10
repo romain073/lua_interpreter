@@ -14,7 +14,7 @@ using namespace std;
 class Node {
 public:
     string tag, value;
-    vector<Node> children;
+    vector<Node*> children;
 
     Node(string t, string v) : tag(t), value(v) {
     }
@@ -26,19 +26,24 @@ public:
         tag = "null";
         value = "null";
     }
+    
+    ~Node() {
+        for(auto i : children)
+            delete i;
+    }
 
     void dump(int depth = 0) {
         for (int i = 0; i < depth; i++)
             cout << "  ";
         cout << tag << ":" << value << endl;
         for(auto i : children)
-            i.dump(depth + 1);
+            i->dump(depth + 1);
     }
 
-    Node operator+(Node n)
+    Node* add(Node* n)
     {
         this->children.push_back(n);
-        return *this;
+        return this;
     }
 
     int dumpToFile(ofstream &f, int &id) {
@@ -48,7 +53,7 @@ public:
             f << " -> " << value;
         f << "\"];" << endl;
         for(auto i : children) {
-            int childID = i.dumpToFile(f, id);
+            int childID = i->dumpToFile(f, id);
             f << "id" << myID << " -> " << "id" << childID << ";" << endl;
         }
         return myID;
@@ -56,8 +61,8 @@ public:
     
     Value execute(Environment* e){
         if (this->tag == "Block") {
-            children.front().execute(e);
-            children.back().execute(e);
+            children.front()->execute(e);
+            children.back()->execute(e);
         } else if (this->tag == "pass") {
             
         } else if (this->tag == "value") {
@@ -71,51 +76,51 @@ public:
             }
         } else if (this->tag == "Statements") {
             for(auto i : children){
-                i.execute(e);
+                i->execute(e);
             }
         } else if (this->tag == "forequal") {
             int counter = 0;
-            string var = children[0].value;
-            Value from = children[1].execute(e);
-            Value to = children[2].execute(e);
+            string var = children[0]->value;
+            Value from = children[1]->execute(e);
+            Value to = children[2]->execute(e);
             Value step;
-            if(children[3].tag == "pass"){
+            if(children[3]->tag == "pass"){
                 if(from > to) {
                     step = Value(-1);
                 } else {
                     step = Value(1);
                 }
             } else {
-                step = children[3].execute(e);
+                step = children[3]->execute(e);
             }
 
             for(int i = from.int_val;i<=to.int_val;i+=step.int_val){
                 e->add(var, Value(i));
-                children.back().execute(e);
+                children.back()->execute(e);
             }
         } else if (this->tag == "if") {
-            if(children.front().execute(e).isTrue()){
-                children[1].execute(e);
+            if(children.front()->execute(e).isTrue()){
+                children[1]->execute(e);
                 return Value();
             }
-            Node elseif = children[2];
-            for(int i = 0;i<elseif.children.size();i+=2){
-                if(elseif.children[i].execute(e).isTrue()){
-                    elseif.children[i+1].execute(e);
+            Node* elseif = children[2];
+            for(int i = 0;i<elseif->children.size();i+=2){
+                if(elseif->children[i]->execute(e).isTrue()){
+                    elseif->children[i+1]->execute(e);
                     return Value();
                 }
             }
-            children[3].children.front().execute(e);
+            children[3]->children.front()->execute(e);
             return Value();
         } else if (this->tag == "args") {
             Value ret;
             for(auto i : children){
-                ret = i.execute(e);
+                ret = i->execute(e);
             }
             return ret;
         } else if (this->tag == "affectation") {
-            Value varlist = children.front().execute(e);
-            Value explist = children.back().execute(e);
+            Value varlist = children.front()->execute(e);
+            Value explist = children.back()->execute(e);
             // todo assert size equals
             for(int i = 0;i<varlist.list_val.size();i++){
                 e->add(varlist.list_val[i].string_val, explist.list_val[i]);
@@ -123,27 +128,27 @@ public:
         } else if (this->tag == "Explist") {
             vector<Value> list;
             for(auto i : children){
-                list.push_back(i.execute(e));
+                list.push_back(i->execute(e));
             }
             return Value(list);
         } else if (this->tag == "varlist") {
             vector<Value> list;
             for(auto i : children){
-                list.push_back(i.value);
+                list.push_back(i->value);
             }
             return Value(list);
         } else if (this->tag == "+") {
-            return children.front().execute(e)+children.back().execute(e);
+            return children.front()->execute(e)+children.back()->execute(e);
         } else if (this->tag == "*") {
-            return children.front().execute(e)*children.back().execute(e);
+            return children.front()->execute(e)*children.back()->execute(e);
         } else if (this->tag == "/") {
-            return children.front().execute(e)/children.back().execute(e);
+            return children.front()->execute(e)/children.back()->execute(e);
         } else if (this->tag == "-") {
-            return children.front().execute(e)-children.back().execute(e);
+            return children.front()->execute(e)-children.back()->execute(e);
         } else if (this->tag == "%") {
-            return children.front().execute(e)%children.back().execute(e);
+            return children.front()->execute(e)%children.back()->execute(e);
         } else if (this->tag == "==") {
-            return children.front().execute(e)==children.back().execute(e);
+            return children.front()->execute(e)==children.back()->execute(e);
         } else if (this->tag == "number") {
             
             
@@ -181,16 +186,16 @@ public:
             return Value(this->value);
         } else if (this->tag == "str_arg") {
             vector<Value> v;
-            v.push_back(children.front().execute(e));
+            v.push_back(children.front()->execute(e));
             return Value(v);
         } else if (this->tag == "Var") {
             return e->get(this->value);
         } else if (this->tag == "functioncall") {
-            Value args = children.back().execute(e);
-            if(children.front().tag == "propretrieve"){
+            Value args = children.back()->execute(e);
+            if(children.front()->tag == "propretrieve"){
                 string name;
-                for(auto i : children.front().children){
-                    name+=i.value;
+                for(auto i : children.front()->children){
+                    name+=i->value;
                 }   
                 if(name == "ioread"){
                     string param = args.list_val.front().string_val;
@@ -209,7 +214,7 @@ public:
                     cout << "unknown function call " << name;
                     exit(1);
                 }
-            } else if(children.front().value == "print"){
+            } else if(children.front()->value == "print"){
                 for(int i=0;i<args.list_val.size();i++){
                     cout << args.list_val[i].print();
                     if(i != args.list_val.size()-1){
@@ -218,7 +223,7 @@ public:
                 }
                 cout << endl;
             }else{
-                cout << "unknown function " << children.front().value<<endl;
+                cout << "unknown function " << children.front()->value<<endl;
                 exit(1);
             }
         } else {

@@ -246,7 +246,9 @@ public:
                     }
                     
                 } else if(name == "iowrite"){
-                    cout << args.list_val.front().print();
+                    for(auto i : args.list_val){
+                        cout << i.print();
+                    }
                 } else {
                     cout << "unknown function call " << name;
                     exit(1);

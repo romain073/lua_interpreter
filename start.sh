@@ -1,1 +1,1 @@
-make && ./int partialtest.lua && dot -Tpdf tree.dot -otree.pdf;
+make && ./int test.lua && dot -Tpdf tree.dot -otree.pdf;

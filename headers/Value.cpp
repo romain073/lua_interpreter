@@ -243,6 +243,9 @@ inline ostream& operator<<(ostream& os, const Value& obj) {
         case Value::TYPE_NULL:
         	os << "TYPE_NULL";
         	break;
+        case Value::TYPE_BREAK:
+        	os << "TYPE_BREAK";
+        	break;
     	default:
         	os << "Unknwown type " << obj.type;
         	break;

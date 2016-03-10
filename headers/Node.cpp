@@ -62,8 +62,8 @@ public:
     Value execute(Environment* e){
         if (this->tag == "Block") {
             Value v = children.front()->execute(e);
-            if(v.isReturn()){
-                return v;
+            if(v.isReturn() || v.isBreak()){
+                return v; // propagate
             }
             return children.back()->execute(e);
         } else if (this->tag == "pass") {
@@ -75,6 +75,8 @@ public:
                 return ret.list_val[0].setReturn();
             }
             return ret.setReturn();
+        } else if (this->tag == "break") {
+            return Value::BREAK();
         } else if (this->tag == "value") {
             if(this->value == "true"){
                 return Value(true);
@@ -89,8 +91,8 @@ public:
         } else if (this->tag == "Statements") {
             for(auto i : children){
                 Value v = i->execute(e);
-                if(v.isReturn()){
-                    return v;
+                if(v.isReturn() || v.isBreak()){
+                    return v;// propagate
                 }
             }
         } else if (this->tag == "forequal") {
@@ -111,7 +113,9 @@ public:
 
             for(int i = from.int_val;i<=to.int_val;i+=step.int_val){
                 e->add(var, Value(i));
-                children.back()->execute(e);
+                if(children.back()->execute(e).isBreak()){
+                    return Value();
+                }
             }
         } else if (this->tag == "if") {
             if(children.front()->execute(e).isTrue()){
@@ -163,6 +167,8 @@ public:
             return children.front()->execute(e)==children.back()->execute(e);
         } else if (this->tag == "<") {
             return children.front()->execute(e)<children.back()->execute(e);
+        } else if (this->tag == ">") {
+            return children.front()->execute(e)>children.back()->execute(e);
         } else if (this->tag == "number") {
             
             

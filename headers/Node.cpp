@@ -66,6 +66,16 @@ public:
                 return v; // propagate
             }
             return children.back()->execute(e);
+        } else if (this->tag == "tableconstructor") {
+            return children.front()->execute(e);
+        } else if (this->tag == "fieldlist") {
+            Value v = Value::ARRAY();
+            for(auto i : children){
+                if(i->tag == "simple"){
+                    v.array_val.push_back(i->children.front()->execute(e).int_val);
+                }
+            }
+            return v;
         } else if (this->tag == "pass") {
             
         } else if (this->tag == "return") {
@@ -95,19 +105,23 @@ public:
                     return v;// propagate
                 }
             }
+        } else if (this->tag == "repeat") {
+            do{
+                Value v = children.front()->execute(e);
+                if(v.isBreak()){
+                    return Value();
+                }
+                if(v.isReturn()){
+                    return v;
+                }
+            }while(!children.back()->execute(e).isTrue());
         } else if (this->tag == "forequal") {
 
             string var = children[0]->value;
             Value from = children[1]->execute(e);
             Value to = children[2]->execute(e);
-            Value step;
-            if(children[3]->tag == "pass"){
-                if(from > to) {
-                    step = Value(-1);
-                } else {
-                    step = Value(1);
-                }
-            } else {
+            Value step(1);
+            if(children[3]->tag != "pass"){
                 step = children[3]->execute(e);
             }
 
@@ -139,11 +153,31 @@ public:
             }
             return ret;
         } else if (this->tag == "affectation") {
-            Value varlist = children.front()->execute(e);
+            vector<pair<string, int>> list;
+            for(auto i : children.front()->children){
+                if(i->tag == "Var"){
+                    list.push_back(pair<string, int>(i->value,-1));
+                }
+                else if(i->tag == "tableretrieve"){
+                    string var = i->children.front()->value;
+                    int index = i->children.back()->execute(e).int_val;
+                    list.push_back(pair<string, int>(var,index));
+                    
+                }
+            }
+
             Value explist = children.back()->execute(e);
+            int i = 0;
             // todo assert size equals
-            for(unsigned i = 0;i<varlist.list_val.size();i++){
-                e->add(varlist.list_val[i].string_val, explist.list_val[i]);
+            for(auto var : list){
+                if(var.second == -1){
+                    e->add(var.first, explist.list_val[i]);
+                } else {
+                    Value v = e->get(var.first);
+                    v.array_val[var.second-1] = explist.list_val[i].int_val; // TODO check type
+                    e->add(var.first, v);
+                }
+                i++;
             }
         } else if (this->tag == "Explist") {
             vector<Value> list;
@@ -151,14 +185,20 @@ public:
                 list.push_back(i->execute(e));
             }
             return Value(list);
-        } else if (this->tag == "varlist") {
-            vector<Value> list;
-            for(auto i : children){
-                list.push_back(i->value);
-            }
-            return Value(list);
         } else if (this->tag == "+") {
             return children.front()->execute(e)+children.back()->execute(e);
+        } else if (this->tag == "#") {
+            Value v = children.front()->execute(e);
+            if(!v.isArray()){
+                cout << "Can't use operator # on non-array";
+                exit(1);
+            }
+            return Value(v.arrayLength());
+        }else if (this->tag == "tableretrieve") {
+            Value array = children.front()->execute(e);
+            Value index = children.back()->execute(e);
+            return Value(array.array_val[index.int_val-1]);// TODO Check types
+            
         } else if (this->tag == "*") {
             return children.front()->execute(e)*children.back()->execute(e);
         } else if (this->tag == "/") {

@@ -9,7 +9,7 @@ using namespace std;
 class Node;
 struct Value
 {
-    enum TYPE { TYPE_INT, TYPE_STRING, TYPE_DOUBLE, TYPE_BOOLEAN, TYPE_LIST, TYPE_FUNCTION, TYPE_NULL, TYPE_NIL, TYPE_BREAK } type;
+    enum TYPE { TYPE_INT, TYPE_STRING, TYPE_DOUBLE, TYPE_BOOLEAN, TYPE_LIST, TYPE_FUNCTION, TYPE_NULL, TYPE_NIL, TYPE_BREAK, TYPE_ARRAY } type;
 
     int int_val;
     bool bool_val;
@@ -17,6 +17,7 @@ struct Value
     double double_val;
     vector<Value> list_val;
     Node* function_val;
+    vector<int> array_val;
     
     bool return_value = false;
     
@@ -32,6 +33,11 @@ struct Value
         return *this;
     }
     
+    static Value ARRAY(){
+        Value v;
+        v.type = TYPE_ARRAY;
+        return v;
+    }
     static Value NIL(){
         Value v;
         v.type = TYPE_NIL;
@@ -81,6 +87,12 @@ struct Value
     }
     bool isReturn() const{
         return return_value;
+    }
+    bool isArray() const{
+        return type == TYPE_ARRAY;
+    }
+    int arrayLength() const{
+        return array_val.size();
     }
     
     bool isSingleElementList() const{
@@ -170,6 +182,8 @@ struct Value
     {
         if(this->type == TYPE_INT && v.type == TYPE_INT)
             return Value(int_val == v.int_val);
+        if(this->type == TYPE_BOOLEAN && v.type == TYPE_BOOLEAN)
+            return Value(bool_val == v.bool_val);
         cout << "Type not handled in == operator.";
         exit(1);
     }
@@ -248,6 +262,12 @@ inline ostream& operator<<(ostream& os, const Value& obj) {
         	break;
         case Value::TYPE_BREAK:
         	os << "TYPE_BREAK";
+        	break;
+        case Value::TYPE_ARRAY:
+        	os << "TYPE_ARRAY ";
+        	for(auto i : obj.array_val){
+        	    os << i << ", ";
+        	}
         	break;
     	default:
         	os << "Unknwown type " << obj.type;

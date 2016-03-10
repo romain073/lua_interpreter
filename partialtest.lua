@@ -7,6 +7,7 @@ function fibonacci(n)
 end
 
 for n = 1, 16 do
+<<<<<<< HEAD
     io.write(fibonacci(n), ", ")
 end
 io.write("...\n")
@@ -32,3 +33,9 @@ io.write("factorial of ")
 io.write(n)
 io.write(" is ")
 print(x)
+=======
+    io.write(fibonacci(n))
+    io.write(", ")
+end
+io.write("...\n")
+>>>>>>> 57d86227d31cdeca15ac1930b90c182978331716

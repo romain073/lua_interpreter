@@ -6,16 +6,19 @@
 #include <iostream>
 using namespace std;
 
-
+class Node;
 struct Value
 {
-    enum TYPE { TYPE_INT, TYPE_STRING, TYPE_DOUBLE, TYPE_BOOLEAN, TYPE_LIST, TYPE_NULL } type;
+    enum TYPE { TYPE_INT, TYPE_STRING, TYPE_DOUBLE, TYPE_BOOLEAN, TYPE_LIST, TYPE_FUNCTION, TYPE_NULL, TYPE_NIL, TYPE_BREAK } type;
 
     int int_val;
     bool bool_val;
     string string_val;
     double double_val;
     vector<Value> list_val;
+    Node* function_val;
+    
+    bool return_value = false;
     
     static Value FromNumber(string n){
         if(n.find(".") != string::npos){
@@ -24,12 +27,31 @@ struct Value
         return Value(stoi(n)); // int
     }
     
+    Value setReturn(bool b=true){
+        return_value = b;
+        return *this;
+    }
+    
+    static Value NIL(){
+        Value v;
+        v.type = TYPE_NIL;
+        return v;
+    }
+    static Value BREAK(){
+        Value v;
+        v.type = TYPE_BREAK;
+        return v;
+    }
     Value(){
         type = TYPE_NULL;
     }    
     Value(int v){
         int_val = v;
         type = TYPE_INT;
+    }
+    Value(Node* v){
+        function_val = v;
+        type = TYPE_FUNCTION;
     }
     Value(bool v){
         bool_val = v;
@@ -48,6 +70,24 @@ struct Value
         type = TYPE_LIST;
     }
     
+    bool isFunction() const{
+        return type == TYPE_FUNCTION;
+    }
+    bool isNull() const{
+        return type == TYPE_NULL;
+    }
+    bool isBreak() const{
+        return type == TYPE_BREAK;
+    }
+    bool isReturn() const{
+        return return_value;
+    }
+    
+    bool isSingleElementList() const{
+        return type == TYPE_LIST && list_val.size()==1;
+    }
+
+    
     bool isTrue(){
         switch(this->type){
             case TYPE_INT:
@@ -62,6 +102,9 @@ struct Value
                 return list_val.size()!=0;
             case TYPE_NULL:
             	return false;
+        	default:
+                cout << "Unhandled isTrue() for type "<< type << endl;
+                exit(1);
         }
     }
     Value operator+(Value v)
@@ -134,7 +177,15 @@ struct Value
     {
         if(this->type == TYPE_INT && v.type == TYPE_INT)
             return int_val > v.int_val;
-        cout << "Type not handled in - operator.";
+        cout << "Type not handled in > operator.";
+        exit(1);
+    }
+    
+    bool operator<(Value v)
+    {
+        if(this->type == TYPE_INT && v.type == TYPE_INT)
+            return int_val < v.int_val;
+        cout << "Type not handled in < operator.";
         exit(1);
     }
     
@@ -154,8 +205,15 @@ struct Value
                     str+=i.print()+",";
                 }
                 return str;}
+            case TYPE_NIL:
+            	return "nil";
             case TYPE_NULL:
             	return "NULL";
+            case TYPE_BREAK:
+            	return "BREAK";
+            default:
+                cout << "Unhandled print type" << this->type<< endl;
+                exit(1);
         }
     }
     
@@ -163,6 +221,9 @@ struct Value
 };
 
 inline ostream& operator<<(ostream& os, const Value& obj) {
+    if(obj.isReturn()){
+        os << "RETURN VAL ";
+    }
     switch(obj.type){
         case Value::TYPE_INT:
         	os << "TYPE_INT " << obj.int_val;
@@ -176,11 +237,20 @@ inline ostream& operator<<(ostream& os, const Value& obj) {
         case Value::TYPE_BOOLEAN:
         	os << "TYPE_BOOLEAN " <<  obj.bool_val;
         	break;
+        case Value::TYPE_FUNCTION:
+        	os << "TYPE_FUNCTION " <<  obj.function_val;
+        	break;
         case Value::TYPE_LIST:
         	os << "TYPE_LIST size " <<  obj.list_val.size();
         	break;
         case Value::TYPE_NULL:
         	os << "TYPE_NULL";
+        	break;
+        case Value::TYPE_BREAK:
+        	os << "TYPE_BREAK";
+        	break;
+    	default:
+        	os << "Unknwown type " << obj.type;
         	break;
     }
     return os;

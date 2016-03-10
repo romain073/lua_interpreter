@@ -4,7 +4,7 @@
 #include "headers/Environment.cpp"
 #include <fstream>
 #include <string.h>
-extern Node root;
+extern Node* root;
 extern FILE *yyin;
 void yy::parser::error(string const&err)
 {
@@ -26,16 +26,17 @@ int main(int argc, char **argv)
   
   if(!parser.parse()){
     cout << "Parse complete." << endl;
-    root.dump();
+    root->dump();
     ofstream myfile;
     myfile.open("tree.dot");
     int id = 0;
     myfile << "digraph {" << endl;
-    root.dumpToFile(myfile, id);
+    root->dumpToFile(myfile, id);
     myfile << "}" << endl;
     myfile.close(); 
     Environment* e = new Environment();
-    root.execute(e);
+    root->execute(e);
+    delete root;
     return 0;
   }
   return 1;

@@ -68,8 +68,8 @@ or          { return yy::parser::make_OR(yytext); }
 ;         { return yy::parser::make_SEMICOLON(yytext); }
 =         { return yy::parser::make_EQUAL(yytext); }
 ,         { return yy::parser::make_COMMA(yytext); }
-\'[^']*\'    { return yy::parser::make_STRING(yytext); }
-\"[^"]*\"    { return yy::parser::make_STRING(yytext); }
+\'([^'\\]|(\\n|\\\\|\\t|\\\'))*\'    { return yy::parser::make_STRING(yytext); }
+\"([^"\\]|(\\n|\\\\|\\t|\\\"))*\"    { return yy::parser::make_STRING(yytext); }
 \.    { return yy::parser::make_DOT(yytext); }
 \.\.    { return yy::parser::make_DOTDOT(yytext); }
 \.\.\.    { return yy::parser::make_DOTDOTDOT(yytext); }

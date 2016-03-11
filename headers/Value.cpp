@@ -203,7 +203,7 @@ struct Value
         exit(1);
     }
     
-    string print() {
+    string print() const{
         switch(this->type){
             case TYPE_INT:
             	return to_string(this->int_val);
@@ -225,6 +225,13 @@ struct Value
             	return "NULL";
             case TYPE_BREAK:
             	return "BREAK";
+            case TYPE_ARRAY:{
+                string s;
+                for(auto i : array_val){
+                    s += i + ", ";
+                }
+            	return s;
+            }
             default:
                 cout << "Unhandled print type" << this->type<< endl;
                 exit(1);
@@ -236,44 +243,38 @@ struct Value
 
 inline ostream& operator<<(ostream& os, const Value& obj) {
     if(obj.isReturn()){
-        os << "RETURN VAL ";
+        os << "RETURN VALUE ";
     }
     switch(obj.type){
         case Value::TYPE_INT:
-        	os << "TYPE_INT " << obj.int_val;
+        	os << "TYPE_INT ";
         	break;
         case Value::TYPE_STRING:
-        	os << "TYPE_STRING " <<  obj.string_val;
+        	os << "TYPE_STRING ";
         	break;
         case Value::TYPE_DOUBLE:
-        	os << "TYPE_DOUBLE " <<  obj.double_val;
+        	os << "TYPE_DOUBLE ";
         	break;
         case Value::TYPE_BOOLEAN:
-        	os << "TYPE_BOOLEAN " <<  obj.bool_val;
+        	os << "TYPE_BOOLEAN ";
         	break;
         case Value::TYPE_FUNCTION:
-        	os << "TYPE_FUNCTION " <<  obj.function_val;
+        	os << "TYPE_FUNCTION ";
         	break;
         case Value::TYPE_LIST:
-        	os << "TYPE_LIST size " <<  obj.list_val.size();
+        	os << "TYPE_LIST ";
+        	break;
+    	case Value::TYPE_ARRAY:
+        	os << "TYPE_ARRAY ";
         	break;
         case Value::TYPE_NULL:
-        	os << "TYPE_NULL";
-        	break;
+        	return os << "TYPE_NULL";
         case Value::TYPE_BREAK:
-        	os << "TYPE_BREAK";
-        	break;
-        case Value::TYPE_ARRAY:
-        	os << "TYPE_ARRAY ";
-        	for(auto i : obj.array_val){
-        	    os << i << ", ";
-        	}
-        	break;
+        	return os << "TYPE_BREAK";
     	default:
-        	os << "Unknwown type " << obj.type;
-        	break;
+        	return os << "Unknwown type " << obj.type;
     }
-    return os;
+    return os << obj.print();
 }
 
 #endif  /* VALUE_H */

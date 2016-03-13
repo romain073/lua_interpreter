@@ -120,6 +120,10 @@ public:
             return v;
         } else if (this->tag == "pass") {
             
+        } else if (this->tag == "and") {
+            return Value(children.front()->execute(e).isTrue() && children.back()->execute(e).isTrue());
+        } else if (this->tag == "or") {
+            return Value(children.front()->execute(e).isTrue() || children.back()->execute(e).isTrue());
         } else if (this->tag == "return") {
             Value ret = children.front()->execute(e);
             

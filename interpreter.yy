@@ -68,10 +68,11 @@
 %token <std::string> RETURN
 %token <std::string> BREAK
 
+%left AND
+%left OR
 %left LT GT EQ NE LTE GTE
 %left PLUS MINUS
 %left MULTIPLY DIVIDE MODULO POW DOTDOT
-%left AND OR
 %right UNARY
 
 %type <Node*> block

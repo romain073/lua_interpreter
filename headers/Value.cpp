@@ -34,7 +34,7 @@ Value operator X (Value v)\
     if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)\
         return Value(double_val X v.double_val);\
     if(this->type == TYPE_BOOLEAN && v.type == TYPE_BOOLEAN)\
-        return Value(double_val X v.double_val);\
+        return Value(bool_val X v.bool_val);\
     cout << "Type not handled in "<< #X <<" operator.";\
     exit(1);\
 }

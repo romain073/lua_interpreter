@@ -187,7 +187,7 @@ struct Value
             case TYPE_DOUBLE:
             	return to_string(this->double_val);
             case TYPE_BOOLEAN:
-            	return to_string(this->bool_val);
+            	return this->bool_val?"true":"false";
             case TYPE_LIST:{
                 string str = "";
                 for(auto i : list_val){

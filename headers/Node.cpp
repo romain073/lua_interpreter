@@ -250,6 +250,9 @@ public:
         } else if (this->tag == "/") {
             return children.front()->execute(e)/children.back()->execute(e);
         } else if (this->tag == "-") {
+            if(children.size()==1){
+                return children.front()->execute(e).negate();
+            }
             return children.front()->execute(e)-children.back()->execute(e);
         } else if (this->tag == "%") {
             return children.front()->execute(e)%children.back()->execute(e);

@@ -116,6 +116,16 @@ struct Value
         return type == TYPE_LIST && list_val.size()==1;
     }
 
+    Value negate(){
+        if(type == TYPE_INT){
+            return Value(-int_val);
+        } else if(type == TYPE_DOUBLE){
+            return Value(-double_val);
+        } else {
+            cout << "Unhandled negate() for type "<< type << endl;
+            exit(1);
+        }
+    }
     
     bool isTrue(){
         switch(this->type){

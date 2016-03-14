@@ -25,8 +25,7 @@ int main(int argc, char **argv)
   }
   
   if(!parser.parse()){
-    cout << "Parse complete." << endl;
-    root->dump();
+    //root->dump();
     ofstream myfile;
     myfile.open("tree.dot");
     int id = 0;

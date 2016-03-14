@@ -264,6 +264,10 @@ public:
             return children.front()->execute(e)<children.back()->execute(e);
         } else if (this->tag == ">") {
             return children.front()->execute(e)>children.back()->execute(e);
+        } else if (this->tag == ">=") {
+            return children.front()->execute(e)>=children.back()->execute(e);
+        } else if (this->tag == "<=") {
+            return children.front()->execute(e)<=children.back()->execute(e);
         } else if (this->tag == "number") {
             
             

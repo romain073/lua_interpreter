@@ -168,6 +168,8 @@ struct Value
     OPERATOR_DEF(-)
     OPERATOR_DEF(>)
     OPERATOR_DEF(<)
+    OPERATOR_DEF(>=)
+    OPERATOR_DEF(<=)
     OPERATOR_EQ_DEF(==)
     OPERATOR_EQ_DEF(!=)
     Value operator%(Value v)

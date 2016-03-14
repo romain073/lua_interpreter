@@ -22,6 +22,22 @@ Value operator X (Value v)\
     exit(1);\
 }
 
+#define OPERATOR_EQ_DEF(X) \
+Value operator X (Value v)\
+{\
+    if(this->type == TYPE_INT && v.type == TYPE_INT)\
+        return Value(int_val X v.int_val);\
+    if(this->type == TYPE_DOUBLE && v.type == TYPE_INT)\
+        return Value(double_val X v.int_val);\
+    if(this->type == TYPE_INT && v.type == TYPE_DOUBLE)\
+        return Value(int_val X v.double_val);\
+    if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)\
+        return Value(double_val X v.double_val);\
+    if(this->type == TYPE_BOOLEAN && v.type == TYPE_BOOLEAN)\
+        return Value(double_val X v.double_val);\
+    cout << "Type not handled in "<< #X <<" operator.";\
+    exit(1);\
+}
 
 class Node;
 struct Value
@@ -152,6 +168,8 @@ struct Value
     OPERATOR_DEF(-)
     OPERATOR_DEF(>)
     OPERATOR_DEF(<)
+    OPERATOR_EQ_DEF(==)
+    OPERATOR_EQ_DEF(!=)
     Value operator%(Value v)
     {
         if(this->type == TYPE_INT && v.type == TYPE_INT)
@@ -159,15 +177,7 @@ struct Value
         cout << "Type not handled in % operator.";
         exit(1);
     }
-    Value operator==(Value v)
-    {
-        if(this->type == TYPE_INT && v.type == TYPE_INT)
-            return Value(int_val == v.int_val);
-        if(this->type == TYPE_BOOLEAN && v.type == TYPE_BOOLEAN)
-            return Value(bool_val == v.bool_val);
-        cout << "Type not handled in == operator.";
-        exit(1);
-    }
+    
     string print() const{
         switch(this->type){
             case TYPE_INT:

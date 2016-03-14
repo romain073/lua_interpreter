@@ -137,6 +137,8 @@ struct Value
             return Value(-int_val);
         } else if(type == TYPE_DOUBLE){
             return Value(-double_val);
+        } else if(type == TYPE_BOOLEAN){
+            return Value(!bool_val);
         } else {
             cout << "Unhandled negate() for type "<< type << endl;
             exit(1);

@@ -268,6 +268,8 @@ public:
             return children.front()->execute(e)>=children.back()->execute(e);
         } else if (this->tag == "<=") {
             return children.front()->execute(e)<=children.back()->execute(e);
+        } else if (this->tag == "not") {
+            return children.front()->execute(e).negate();
         } else if (this->tag == "number") {
             
             

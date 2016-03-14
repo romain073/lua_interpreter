@@ -6,6 +6,23 @@
 #include <iostream>
 using namespace std;
 
+
+#define OPERATOR_DEF(X) \
+Value operator X (Value v)\
+{\
+    if(this->type == TYPE_INT && v.type == TYPE_INT)\
+        return Value(int_val X v.int_val);\
+    if(this->type == TYPE_DOUBLE && v.type == TYPE_INT)\
+        return Value(double_val X v.int_val);\
+    if(this->type == TYPE_INT && v.type == TYPE_DOUBLE)\
+        return Value(int_val X v.double_val);\
+    if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)\
+        return Value(double_val X v.double_val);\
+    cout << "Type not handled in "<< #X <<" operator.";\
+    exit(1);\
+}
+
+
 class Node;
 struct Value
 {
@@ -119,58 +136,12 @@ struct Value
                 exit(1);
         }
     }
-    Value operator+(Value v)
-    {
-        if(this->type == TYPE_INT && v.type == TYPE_INT)
-            return Value(int_val + v.int_val);
-        if(this->type == TYPE_DOUBLE && v.type == TYPE_INT)
-            return Value(double_val + v.int_val);
-        if(this->type == TYPE_INT && v.type == TYPE_DOUBLE)
-            return Value(v.int_val + double_val);
-        if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
-            return Value(double_val + v.double_val);
-        cout << "Type not handled in + operator.";
-        exit(1);
-    }
-    Value operator*(Value v)
-    {
-        if(this->type == TYPE_INT && v.type == TYPE_INT)
-            return Value(int_val * v.int_val);
-        if(this->type == TYPE_DOUBLE && v.type == TYPE_INT)
-            return Value(double_val * v.int_val);
-        if(this->type == TYPE_INT && v.type == TYPE_DOUBLE)
-            return Value(v.int_val * double_val);
-        if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
-            return Value(double_val * v.double_val);
-        cout << "Type not handled in * operator.";
-        exit(1);
-    }
-    Value operator/(Value v)
-    {
-        if(this->type == TYPE_INT && v.type == TYPE_INT)
-            return Value(int_val / v.int_val);
-        if(this->type == TYPE_DOUBLE && v.type == TYPE_INT)
-            return Value(double_val / v.int_val);
-        if(this->type == TYPE_INT && v.type == TYPE_DOUBLE)
-            return Value(v.int_val / double_val);
-        if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
-            return Value(double_val / v.double_val);
-        cout << "Type not handled in / operator.";
-        exit(1);
-    }
-    Value operator-(Value v)
-    {
-        if(this->type == TYPE_INT && v.type == TYPE_INT)
-            return Value(int_val - v.int_val);
-        if(this->type == TYPE_DOUBLE && v.type == TYPE_INT)
-            return Value(double_val - v.int_val);
-        if(this->type == TYPE_INT && v.type == TYPE_DOUBLE)
-            return Value(v.int_val - double_val);
-        if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
-            return Value(double_val - v.double_val);
-        cout << "Type not handled in - operator.";
-        exit(1);
-    }
+    OPERATOR_DEF(+)
+    OPERATOR_DEF(*)
+    OPERATOR_DEF(/)
+    OPERATOR_DEF(-)
+    OPERATOR_DEF(>)
+    OPERATOR_DEF(<)
     Value operator%(Value v)
     {
         if(this->type == TYPE_INT && v.type == TYPE_INT)
@@ -187,22 +158,6 @@ struct Value
         cout << "Type not handled in == operator.";
         exit(1);
     }
-    bool operator>(Value v)
-    {
-        if(this->type == TYPE_INT && v.type == TYPE_INT)
-            return int_val > v.int_val;
-        cout << "Type not handled in > operator.";
-        exit(1);
-    }
-    
-    bool operator<(Value v)
-    {
-        if(this->type == TYPE_INT && v.type == TYPE_INT)
-            return int_val < v.int_val;
-        cout << "Type not handled in < operator.";
-        exit(1);
-    }
-    
     string print() const{
         switch(this->type){
             case TYPE_INT:

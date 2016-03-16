@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cmath>
 using namespace std;
 
 
@@ -143,6 +144,19 @@ struct Value
             cout << "Unhandled negate() for type "<< type << endl;
             exit(1);
         }
+    }
+    
+    Value pow(Value v){
+        if(this->type == TYPE_INT && v.type == TYPE_INT)
+            return Value((int)std::pow(int_val, v.int_val));
+        if(this->type == TYPE_DOUBLE && v.type == TYPE_INT)
+            return Value(std::pow(double_val, v.int_val));
+        if(this->type == TYPE_INT && v.type == TYPE_DOUBLE)
+            return Value(std::pow(int_val, v.double_val));
+        if(this->type == TYPE_DOUBLE && v.type == TYPE_DOUBLE)
+            return Value(std::pow(double_val, v.double_val));
+        cout << "Unhandled type in pow()" << endl;
+        exit(1);
     }
     
     bool isTrue(){

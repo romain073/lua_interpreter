@@ -272,6 +272,8 @@ public:
             return children.front()->execute(e).negate();
         } else if (this->tag == "..") {
             return Value(children.front()->execute(e).print() + children.back()->execute(e).print());
+        }  else if (this->tag == "^") {
+            return children.front()->execute(e).pow(children.back()->execute(e));
         } else if (this->tag == "number") {
             
             

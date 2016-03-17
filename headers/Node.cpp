@@ -220,7 +220,7 @@ public:
                     e->add(var.first, explist.list_val[i]);
                 } else {
                     Value v = e->get(var.first);
-                    v.array_val[var.second-1] = explist.list_val[i].int_val; // TODO check type
+                    v.array_val[var.second-1] = explist.list_val[i].int_val;
                     e->add(var.first, v);
                 }
                 i++;
@@ -236,14 +236,14 @@ public:
         } else if (this->tag == "#") {
             Value v = children.front()->execute(e);
             if(!v.isArray()){
-                cout << "Can't use operator # on non-array";
+                cout << "Cannot use operator # on non-array";
                 exit(1);
             }
             return Value(v.arrayLength());
         }else if (this->tag == "tableretrieve") {
             Value array = children.front()->execute(e);
             Value index = children.back()->execute(e);
-            return Value(array.array_val[index.int_val-1]);// TODO Check types
+            return Value(array.array_val[index.int_val-1]);
             
         } else if (this->tag == "*") {
             return children.front()->execute(e)*children.back()->execute(e);
@@ -275,11 +275,9 @@ public:
         }  else if (this->tag == "^") {
             return children.front()->execute(e).pow(children.back()->execute(e));
         } else if (this->tag == "number") {
-            
-            
             if(this->value.find("0x") == 0){
                 return Value(stoi(this->value.erase(0,2), 0,16)); //hex
-            }else {
+            } else {
                 size_t expindex = this->value.find("e");
                 if(expindex == string::npos){
                     expindex = this->value.find("E");
@@ -304,8 +302,6 @@ public:
                     return v/m;
                 else
                     return v*m;
-                
-                
             }
         } else if (this->tag == "string") {
             return Value(this->value);
@@ -324,7 +320,7 @@ public:
             }
             return Value(names);
         } else if (this->tag == "funcname") {
-            return Value(children.front()->value); // todo - implement colon syntax
+            return Value(children.front()->value);
         } else if (this->tag == "functiondef") {
             string name = children.front()->execute(e).string_val;
             e->add(name, Value(children.back()));
@@ -342,7 +338,7 @@ public:
                         cin >> input;
                         return Value::FromNumber(input);
                     } else {
-                        cout << "invalid param for io.read";
+                        cout << "unhandled param for io.read";
                         exit(1);
                     }
                     
@@ -389,10 +385,8 @@ public:
             cout << "Not implemented - " << this->tag << endl;
             exit(1);
         }
-            
         return Value();
     }
-
 };
 
 #endif  /* NODE_H */

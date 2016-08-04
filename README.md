@@ -6,6 +6,12 @@ A small interpreter supporting a subset of the LUA programming language.
 This project is using [flex](http://flex.sourceforge.net/) for lexing and [Bison](https://www.gnu.org/software/bison/) for parsing. 
 
 ## Build
+### Dependencies
+```
+apt-get install bison
+apt-get install flex
+```
+### Building the project
 ```
 make
 ```
@@ -16,13 +22,13 @@ make
 ```
 
 ## Visualizing the parse tree
-The parse tree can be visualized with [Graphviz](http://www.graphviz.org/), by using the following command:
+The parse tree can be visualized with [Graphviz](http://www.graphviz.org/) (```apt-get install graphviz```), by using the following command:
 ```
 dot -Tpdf tree.dot -otree.pdf
 ```
 
 ## Supported features
-- Affectation ```a = "string"```, ```a, b = 3, 4```, ```array[i], array[i+1] = array[i+1], array[i]```
+- Affectation ```a, b = 3, 4```, ```array[i], array[i+1] = array[i+1], array[i]```
 - Control flow ```if ... then ... elseif ... then ... else ...```, ```while```, ```for```
 - Input & output  ```io.write()```, ```print()```, ```io.read()```
 - Numerical Arrays ```a = {1,2,3}```
